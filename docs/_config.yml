@@ -22,7 +22,5 @@ header_pages:
   - about.md
 exclude:
   - README.md
-# 검색 등록 소유 확인 값. 받으면 따옴표 안에 넣는다.
-webmaster_verifications:
-  google: ""
+# 검색 등록 소유 확인 값(구글은 docs/google*.html 파일로 확인). 지우지 않는다.
 naver_site_verification: "3d26796a35d603ab259137ddd8524eef8534473d"

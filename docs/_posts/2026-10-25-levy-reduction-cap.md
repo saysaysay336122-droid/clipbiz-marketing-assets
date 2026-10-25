@@ -2,7 +2,7 @@
 layout: post
 title: "연계고용 부담금 감면, 한도는 어떻게 정해질까"
 description: "장애인고용부담금을 줄이는 연계고용 감면의 한도 계산 방식, 놓치기 쉬운 요건, 연말에 챙길 서류를 고용노동부 고시 원문 기준으로 정리했습니다."
-date: 2026-10-26 09:10:00 +0900
+date: 2026-10-25 21:00:00 +0900
 categories: ansimclip
 slug: levy-reduction-cap
 ---

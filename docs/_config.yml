@@ -1,0 +1,21 @@
+title: 클립비즈 인사이트
+description: 장애인고용부담금과 연계고용, 장애인 채용정보, 기업 유휴자산 거래에 관한 실무 글. 안심클립, 하이클립, 클립마켓을 만드는 클립비즈가 씁니다.
+lang: ko
+url: https://saysaysay336122-droid.github.io
+baseurl: /clipbiz-marketing-assets
+author: 클립비즈
+email: clipbiz@naver.com
+timezone: Asia/Seoul
+theme: minima
+show_excerpts: true
+permalink: /:categories/:slug/
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+minima:
+  date_format: "%Y년 %m월 %d일"
+header_pages:
+  - about.md
+exclude:
+  - README.md

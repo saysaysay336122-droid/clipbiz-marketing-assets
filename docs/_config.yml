@@ -25,4 +25,4 @@ exclude:
 # 검색 등록 소유 확인 값. 받으면 따옴표 안에 넣는다.
 webmaster_verifications:
   google: ""
-naver_site_verification: ""
+naver_site_verification: "3d26796a35d603ab259137ddd8524eef8534473d"

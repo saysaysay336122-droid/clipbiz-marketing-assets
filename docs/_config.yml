@@ -9,6 +9,8 @@ timezone: Asia/Seoul
 theme: minima
 show_excerpts: true
 permalink: /:categories/:slug/
+# 승인 뒤 push하는 즉시 공개되도록 날짜가 앞선 글도 싣는다
+future: true
 plugins:
   - jekyll-feed
   - jekyll-sitemap

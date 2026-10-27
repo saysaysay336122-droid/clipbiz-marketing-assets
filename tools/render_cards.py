@@ -9,9 +9,9 @@ spec.json 형식:
   ],
   ...
 }
-theme: "b2b"(남색, 안심클립 하이클립 클립마켓) 또는 "hcs"(먹색, 홍책사)
+theme: "b2b"(남색, clipbiz2026 계정의 안심클립 하이클립 클립마켓), "hic"(밝은 바탕, 하이클립 전용 계정) 또는 "hcs"(먹색, 홍책사)
 선택 키: "hexagram": [아래에서 위로 6개, "yang" 또는 "yin"] 를 넣으면 오른쪽 아래에 괘를 그린다.
-출력: 1080x1350 PNG, 파일명 <ID>_<번호>.png, manifest.json
+출력: 1080x1350 PNG, 파일명 <ID>_<번호>.png, manifest.json(폴더에 이미 있으면 합친다)
 """
 import json
 import sys
@@ -22,6 +22,8 @@ from playwright.sync_api import sync_playwright
 THEMES = {
     "b2b": dict(bg="#17395E", fg="#FFFFFF", sub="#C9D6E3", accent="#E8590C", font="'Noto Sans CJK KR'"),
     "hcs": dict(bg="#16201C", fg="#F2EFE6", sub="#A9B3AD", accent="#B5342A", font="'Noto Serif CJK KR'"),
+    # 하이클립 화면 색(hiclip.kr :root). 글자 대비 #14202E/#F5F6F3 약 15:1, #485868/#F5F6F3 약 7:1
+    "hic": dict(bg="#F5F6F3", fg="#14202E", sub="#485868", accent="#C64016", font="'Noto Sans CJK KR'"),
 }
 
 
@@ -68,7 +70,8 @@ def main():
     spec = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
     out = Path(sys.argv[2])
     out.mkdir(parents=True, exist_ok=True)
-    manifest = {}
+    mf = out / "manifest.json"
+    manifest = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
     with sync_playwright() as p:
         b = p.chromium.launch()
         pg = b.new_page(viewport={"width": 1080, "height": 1350})
@@ -82,8 +85,8 @@ def main():
                 files.append(f.name)
             manifest[cid] = files
         b.close()
-    (out / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(json.dumps(manifest, ensure_ascii=False))
+    mf.write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(json.dumps({k: manifest[k] for k in spec}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

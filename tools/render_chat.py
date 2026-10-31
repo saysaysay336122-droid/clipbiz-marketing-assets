@@ -20,8 +20,12 @@ spec.json 예
   ],
   "pages": [4, 8],                      # 카드로 나눌 때 각 장의 마지막 메시지 번호(선택, 없으면 4개씩)
   "end": {"title": "감면은 부담금의 90%와\\n도급액의 50% 중 작은 금액", "body": "예상 참고액, 최종 인정은 한국장애인고용공단", "foot": "ansimclip.kr"},
-  "music": true
+  "music": true,
+  "bg": [{"pexels": "6100897", "start": 1}, {"pexels": "7710418"}],   # 선택. 넣으면 실사 영상 위에 대화가 뜬다
+  "hook": "박 대리의 연말 1화"                                            # 선택. bg가 있을 때 첫 1.8초 큰 글씨
 }
+영상 모드(bg가 있을 때): 첫 1.8초는 선명한 실사 영상 위에 when과 hook을 크게 보여 주고, 대화가 시작되면 배경을 흐리게 한다.
+'note'가 나오면 다음 bg 영상으로 넘어가며 1.5초 동안 선명한 화면에 그 문장을 크게 보여 준다(장면 전환). 끝 화면은 흐린 영상 위에 글.
 
 규칙
 1. 등장인물은 모두 가상 인물이다. 화면 위에 '등장인물은 가상 인물입니다'를 작게 넣는다(지우지 않는다).
@@ -55,46 +59,66 @@ def esc(s):
     return html.escape(s or "").replace("\n", "<br>")
 
 
+AVATAR = ["#7C9CBF", "#C49A6C", "#8DAA91", "#B48EAD", "#D08770", "#88A0A8"]
+
+
 def bubbles(t, spec, msgs, typing_from=None):
+    """같은 사람이 이어 보낸 말은 묶어서 이름과 얼굴 표시를 한 번만 둔다."""
     me = spec.get("me")
-    out = []
-    for m in msgs:
+    items = list(msgs) + ([{"from": typing_from, "typing": True}] if typing_from is not None else [])
+    out, prev = [], None
+    for m in items:
         if m.get("note"):
             out.append(f"<div class='note'>{esc(m['note'])}</div>")
+            prev = None
             continue
-        mine = m.get("from") == me
-        name = "" if mine else f"<div class='name'>{esc(m.get('from'))}</div>"
-        out.append(f"<div class='row {'me' if mine else 'other'}'>{name}<div class='b'>{esc(m.get('text'))}</div></div>")
-    if typing_from is not None:
-        mine = typing_from == me
-        name = "" if mine else f"<div class='name'>{esc(typing_from)}</div>"
-        out.append(f"<div class='row {'me' if mine else 'other'}'>{name}<div class='b typing'><i></i><i></i><i></i></div></div>")
+        who = m.get("from")
+        mine = who == me
+        first = who != prev
+        prev = who
+        body = "<span class='dots'><i></i><i></i><i></i></span>" if m.get("typing") else esc(m.get("text"))
+        cls = "b typing" if m.get("typing") else "b"
+        if mine:
+            out.append(f"<div class='row me{' gap' if first else ''}'><div class='{cls}'>{body}</div></div>")
+        else:
+            color = AVATAR[sum(map(ord, who or "")) % len(AVATAR)]
+            av = f"<div class='av' style='background:{color}'>{esc((who or ' ')[0])}</div>" if first else "<div class='av ghost'></div>"
+            name = f"<div class='name'>{esc(who)}</div>" if first else ""
+            out.append(f"<div class='row other{' gap' if first else ''}'>{av}<div class='col'>{name}<div class='{cls}'>{body}</div></div></div>")
     return "".join(out)
 
 
-def chat_html(t, spec, msgs, typing_from=None, w=1080, h=1920, card=False):
+def chat_html(t, spec, msgs, typing_from=None, w=1080, h=1920, card=False, video=False):
     bottom = 120 if card else 340
     right = 72 if card else 150
     when = f"<div class='when'>{esc(spec.get('when'))}</div>" if spec.get("when") else ""
+    bg = "transparent" if video else t["bg"]
+    head = "rgba(10,14,20,.42)" if video else t["head"]
+    sub = "#FFFFFF" if video else t["sub"]
+    shadow = "text-shadow:0 1px 6px rgba(0,0,0,.6);" if video else ""
     return f"""<!doctype html><html><head><meta charset='utf-8'><style>
     *{{margin:0;padding:0;box-sizing:border-box}}
-    body{{width:{w}px;height:{h}px;background:{t['bg']};font-family:{FONT};position:relative;overflow:hidden}}
-    .head{{position:absolute;left:0;right:0;top:0;height:{200 if card else 250}px;background:{t['head']};color:{t['headfg']};
+    body{{width:{w}px;height:{h}px;background:{bg};font-family:{FONT};position:relative;overflow:hidden}}
+    .head{{position:absolute;left:0;right:0;top:0;height:{200 if card else 250}px;background:{head};color:{t['headfg'] if not video else '#FFFFFF'};
       display:flex;flex-direction:column;justify-content:flex-end;padding:0 72px 28px}}
-    .room{{font-size:46px;font-weight:700}}
-    .fic{{font-size:26px;opacity:.75;margin-top:6px}}
-    .when{{position:absolute;left:0;right:0;top:{230 if card else 290}px;text-align:center;font-size:32px;color:{t['sub']};font-weight:500}}
-    .area{{position:absolute;left:72px;right:{right}px;top:{300 if card else 370}px;bottom:{bottom}px;display:flex;flex-direction:column;justify-content:flex-end;gap:22px;overflow:hidden}}
-    .row{{display:flex;flex-direction:column;max-width:82%}}
-    .row.other{{align-self:flex-start;align-items:flex-start}}
-    .row.me{{align-self:flex-end;align-items:flex-end}}
-    .name{{font-size:28px;color:{t['sub']};margin:0 0 8px 6px;font-weight:500}}
-    .b{{font-size:44px;line-height:1.42;padding:24px 30px;border-radius:30px;word-break:keep-all}}
-    .other .b{{background:{t['other']};color:{t['otherfg']};border-top-left-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.06)}}
-    .me .b{{background:{t['me']};color:{t['mefg']};border-top-right-radius:8px}}
-    .note{{align-self:center;font-size:30px;color:{t['sub']};padding:8px 24px;border-radius:999px;border:2px solid {t['sub']};opacity:.85}}
-    .typing{{display:flex;gap:12px;align-items:center;height:110px}}
-    .typing i{{width:16px;height:16px;border-radius:50%;background:currentColor;opacity:.5;display:block}}
+    .room{{font-size:44px;font-weight:700;letter-spacing:-0.5px}}
+    .fic{{font-size:24px;opacity:.6;margin-top:6px}}
+    .when{{position:absolute;left:0;right:0;top:{230 if card else 290}px;text-align:center;font-size:32px;color:{sub};font-weight:500;{shadow}}}
+    .area{{position:absolute;left:56px;right:{right}px;top:{300 if card else 370}px;bottom:{bottom}px;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;overflow:hidden}}
+    .row{{display:flex;max-width:84%}}
+    .row.gap{{margin-top:18px}}
+    .row.other{{align-self:flex-start;align-items:flex-start;gap:16px}}
+    .row.me{{align-self:flex-end;justify-content:flex-end}}
+    .col{{display:flex;flex-direction:column;align-items:flex-start;min-width:0}}
+    .av{{flex:0 0 76px;width:76px;height:76px;border-radius:30px;color:#FFFFFF;font-size:34px;font-weight:700;display:flex;align-items:center;justify-content:center}}
+    .av.ghost{{visibility:hidden}}
+    .name{{font-size:29px;color:{sub};margin:0 0 8px 6px;font-weight:500;{shadow}}}
+    .b{{font-size:42px;line-height:1.38;padding:22px 30px;border-radius:34px;word-break:keep-all;letter-spacing:-0.3px}}
+    .other .b{{background:{'rgba(255,255,255,.96)' if video else t['other']};color:{'#17222E' if video else t['otherfg']};border-top-left-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,{'.25' if video else '.06'})}}
+    .me .b{{background:{t['me']};color:{t['mefg']};border-top-right-radius:12px}}
+    .note{{align-self:center;font-size:30px;color:{sub};padding:8px 24px;border-radius:999px;border:2px solid {sub};opacity:.9;{shadow}}}
+    .dots{{display:flex;gap:12px;align-items:center;height:58px}}
+    .dots i{{width:15px;height:15px;border-radius:50%;background:currentColor;opacity:.45;display:block}}
     </style></head><body>
     <div class='head'><div class='room'>{esc(spec.get('room'))}</div><div class='fic'>등장인물은 가상 인물입니다</div></div>
     {when}<div class='area'>{bubbles(t, spec, msgs, typing_from)}</div></body></html>"""
@@ -115,7 +139,37 @@ def end_html(t, e):
     <div class='fic'>등장인물은 가상 인물입니다</div></body></html>"""
 
 
-def shoot(pages, size):
+def caption_html(t, kicker, title):
+    """영상이 선명하게 보이는 장면(시작과 장면 전환) 위의 큰 글씨. 아래 어두운 띠."""
+    k = f"<div class='k'>{esc(kicker)}</div>" if kicker else ""
+    return f"""<!doctype html><html><head><meta charset='utf-8'><style>
+    *{{margin:0;padding:0;box-sizing:border-box}}
+    body{{width:1080px;height:1920px;background:transparent;font-family:{FONT};position:relative;overflow:hidden}}
+    .band{{position:absolute;left:0;right:0;bottom:0;height:1150px;background:linear-gradient(to top, rgba(8,12,18,.92) 0%, rgba(8,12,18,.75) 45%, rgba(8,12,18,0) 100%)}}
+    .box{{position:absolute;left:96px;right:160px;bottom:380px;color:#FFFFFF}}
+    .k{{font-size:34px;font-weight:500;color:rgba(255,255,255,.82);margin-bottom:18px;letter-spacing:0.5px}}
+    .t{{font-size:80px;line-height:1.28;font-weight:700;letter-spacing:-1px;word-break:keep-all;text-shadow:0 2px 14px rgba(0,0,0,.45)}}
+    .fic{{position:absolute;right:160px;top:120px;font-size:24px;color:#FFFFFF;background:rgba(0,0,0,.38);padding:6px 16px;border-radius:999px}}
+    </style></head><body><div class='band'></div><div class='fic'>등장인물은 가상 인물입니다</div>
+    <div class='box'>{k}<div class='t'>{esc(title)}</div></div></body></html>"""
+
+
+def end_video_html(t, e):
+    body = f"<div class='body'>{esc(e.get('body'))}</div>" if e.get("body") else ""
+    foot = f"<div class='foot'>{esc(e.get('foot'))}</div>" if e.get("foot") else ""
+    return f"""<!doctype html><html><head><meta charset='utf-8'><style>
+    *{{margin:0;padding:0;box-sizing:border-box}}
+    body{{width:1080px;height:1920px;background:rgba(8,12,18,.62);color:#FFFFFF;font-family:{FONT};
+      display:flex;flex-direction:column;justify-content:center;padding:0 160px 160px 110px}}
+    .title{{font-size:80px;line-height:1.3;font-weight:700;letter-spacing:-1px;word-break:keep-all}}
+    .body{{margin-top:34px;font-size:40px;line-height:1.5;color:#E3E8EE}}
+    .foot{{margin-top:56px;font-size:42px;font-weight:700;color:{t['accent']}}}
+    .fic{{position:absolute;left:110px;bottom:150px;font-size:26px;color:#E3E8EE}}
+    </style></head><body><div class='title'>{esc(e.get('title'))}</div>{body}{foot}
+    <div class='fic'>등장인물은 가상 인물입니다</div></body></html>"""
+
+
+def shoot(pages, size, transparent=False):
     from playwright.sync_api import sync_playwright
     with sync_playwright() as pw:
         b = pw.chromium.launch()
@@ -123,8 +177,26 @@ def shoot(pages, size):
         for html_text, path in pages:
             p.set_content(html_text)
             p.wait_for_timeout(120)
-            p.screenshot(path=str(path))
+            p.screenshot(path=str(path), omit_background=transparent)
         b.close()
+
+
+def resolve_bg(items):
+    """bg 항목을 로컬 영상 파일로. {"pexels": "번호"} 는 stock/에 내려받는다."""
+    import fetch_stock
+    root = Path(__file__).resolve().parent.parent
+    stock = root / "stock"
+    stock.mkdir(exist_ok=True)
+    out = []
+    for it in items:
+        if it.get("pexels"):
+            vid = "".join(ch for ch in str(it["pexels"]) if ch.isdigit())
+            fetch_stock.cmd_get([f"video:{vid}"], stock)
+            out.append((stock / f"pexels_{vid}.mp4", float(it.get("start", 0))))
+        else:
+            src = Path(it["src"])
+            out.append((src if src.is_absolute() else root / src, float(it.get("start", 0))))
+    return out
 
 
 def main():
@@ -135,38 +207,79 @@ def main():
     msgs = spec["messages"]
     work = Path(tempfile.mkdtemp(prefix="chat_"))
 
-    frames = []  # (html, seconds)
+    video = bool(spec.get("bg"))
+    frames = []  # (html, seconds, segment, clear)
     shown = []
-    frames.append((chat_html(t, spec, []), 0.3))
+    seg = 0
+    if video:
+        frames.append((caption_html(t, spec.get("when"), spec.get("hook") or spec.get("room")), 1.8, 0, True))
+    else:
+        frames.append((chat_html(t, spec, []), 0.3, 0, False))
     for m in msgs:
         if m.get("note"):
-            shown.append(m)
-            frames.append((chat_html(t, spec, shown), 1.2 + float(m.get("pause", 0))))
+            if video:
+                seg += 1
+                frames.append((caption_html(t, "", m["note"]), 1.5 + float(m.get("pause", 0)), seg, True))
+                shown = []
+            else:
+                shown.append(m)
+                frames.append((chat_html(t, spec, shown), 1.2 + float(m.get("pause", 0)), seg, False))
             continue
-        frames.append((chat_html(t, spec, shown, typing_from=m.get("from")), 0.4))
+        frames.append((chat_html(t, spec, shown, typing_from=m.get("from"), video=video), 0.4, seg, False))
         shown.append(m)
-        frames.append((chat_html(t, spec, shown), 0.9 + 0.05 * len(m.get("text", "")) + float(m.get("pause", 0))))
+        frames.append((chat_html(t, spec, shown, video=video), 0.9 + 0.05 * len(m.get("text", "")) + float(m.get("pause", 0)), seg, False))
     end = spec.get("end")
     if end:
-        frames.append((end_html(t, end), float(end.get("dur", 3.4))))
-    total = sum(d for _, d in frames)
+        frames.append(((end_video_html(t, end) if video else end_html(t, end)), float(end.get("dur", 3.4)), seg, False))
+    total = sum(f[1] for f in frames)
     if total > 60:
         sys.exit(f"길이 {total:.1f}초. 60초를 넘는다.")
 
-    pngs = [(h, work / f"f{i:03d}.png") for i, (h, _) in enumerate(frames)]
-    shoot(pngs, (1080, 1920))
+    pngs = [(f[0], work / f"f{i:03d}.png") for i, f in enumerate(frames)]
+    shoot(pngs, (1080, 1920), transparent=video)
     concat = work / "list.txt"
     with open(concat, "w") as f:
-        for (h, p), (_, d) in zip(pngs, frames):
-            f.write(f"file '{p}'\nduration {d:.3f}\n")
+        for (h, p), fr in zip(pngs, frames):
+            f.write(f"file '{p}'\nduration {fr[1]:.3f}\n")
         f.write(f"file '{pngs[-1][1]}'\n")
-    cmd = ["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(concat)]
+    music = None
     if spec.get("music", True):
-        pad = work / "pad.wav"
-        make_pad(total + 0.5, pad, seed=spec.get("seed", 11))
-        cmd += ["-i", str(pad), "-c:a", "aac", "-b:a", "96k", "-shortest"]
-    cmd += ["-vf", "fps=30,format=yuv420p", "-c:v", "libx264", "-preset", "veryfast", "-crf", "22",
-            "-t", f"{total:.3f}", "-movflags", "+faststart", str(out)]
+        music = work / "music.wav"
+        make_pad(total + 0.5, music, seed=spec.get("seed", 11),
+                 style=spec.get("music_style") or {"hcs": "playful"}.get(spec.get("theme", "b2b"), "bright"))
+
+    if not video:
+        cmd = ["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(concat)]
+        if music:
+            cmd += ["-i", str(music), "-c:a", "aac", "-b:a", "128k", "-shortest"]
+        cmd += ["-vf", "fps=30,format=yuv420p", "-c:v", "libx264", "-preset", "veryfast", "-crf", "22",
+                "-t", f"{total:.3f}", "-movflags", "+faststart", str(out)]
+    else:
+        bgs = resolve_bg(spec["bg"])
+        nseg = seg + 1
+        seg_dur = [sum(f[1] for f in frames if f[2] == k) for k in range(nseg)]
+        clear_until = [sum(f[1] for f in frames if f[2] == k and f[3]) for k in range(nseg)]
+        cmd = ["ffmpeg", "-y", "-v", "error"]
+        chains = []
+        for k in range(nseg):
+            src, start = bgs[k % len(bgs)]
+            cmd += ["-stream_loop", "-1", "-ss", f"{start}", "-t", f"{seg_dur[k] + 0.3:.3f}", "-i", str(src)]
+            c = clear_until[k]
+            chains.append(f"[{k}:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30,setsar=1,"
+                          f"trim=duration={seg_dur[k]:.3f},setpts=PTS-STARTPTS,"
+                          f"gblur=sigma=16:enable='gte(t,{c:.3f})',eq=brightness=-0.05:saturation=0.9:enable='gte(t,{c:.3f})'[b{k}]")
+        cmd += ["-f", "concat", "-safe", "0", "-i", str(concat)]
+        ov = nseg
+        if music:
+            cmd += ["-i", str(music)]
+        chains.append("".join(f"[b{k}]" for k in range(nseg)) + f"concat=n={nseg}:v=1:a=0[bg]")
+        chains.append(f"[{ov}:v]fps=30,format=rgba[ov]")
+        chains.append("[bg][ov]overlay=0:0:shortest=1,format=yuv420p[v]")
+        cmd += ["-filter_complex", ";".join(chains), "-map", "[v]"]
+        if music:
+            cmd += ["-map", f"{ov + 1}:a", "-c:a", "aac", "-b:a", "128k"]
+        cmd += ["-c:v", "libx264", "-preset", "veryfast", "-crf", "22", "-r", "30",
+                "-t", f"{total:.3f}", "-movflags", "+faststart", str(out)]
     r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode != 0:
         sys.exit(r.stderr[-2000:])

@@ -7,7 +7,7 @@ spec.json 예
 {
   "theme": "hcs",                       # hcs(홍책사), hic(하이클립), b2b(clipbiz2026)
   "credit": "영상 Pexels",               # 끝 화면 아래 작은 글. 비우면 안 넣는다
-  "music": true,                        # 프로그램이 만든 패드 음향(render_reel.make_pad). false면 무음
+  "music": true,                        # 프로그램이 만든 밝은 배경 음악(tools/music.py). false면 무음. music_style로 bright, playful, chill 지정 가능
   "scenes": [
     {"src": "stock/pexels_5739810.mp4", "start": 0, "dur": 4.2,
      "kicker": "일간", "title": "내 사주에서\n나를 나타내는 글자", "body": "태어난 날의 천간이 일간이에요."},
@@ -168,7 +168,7 @@ def main():
     audio_idx = None
     if spec.get("music", True):
         pad = workdir / "pad.wav"
-        make_pad(total + 0.5, pad, seed=spec.get("seed", 7))
+        make_pad(total + 0.5, pad, seed=spec.get("seed", 7), style=spec.get("music_style") or {"hcs": "playful"}.get(theme, "bright"))
         inputs += ["-i", str(pad)]
         audio_idx = n_in
         maps += ["-map", f"{audio_idx}:a"]

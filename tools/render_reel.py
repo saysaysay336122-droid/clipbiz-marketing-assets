@@ -5,7 +5,7 @@
 
 <카드 폴더>/manifest.json 에서 <ID>의 카드 목록을 읽는다.
 각 장은 천천히 확대되고 다음 장으로 교차 전환된다. 카드 바탕색으로 위아래를 채운다.
-소리는 저작권 문제가 없도록 프로그램이 직접 만든 잔잔한 화음 패드를 낮은 음량으로 넣는다.
+소리는 저작권 문제가 없도록 프로그램이 직접 만든 밝은 배경 음악(tools/music.py)을 넣는다.
 """
 import json
 import math
@@ -21,36 +21,13 @@ FPS = 30
 W, H = 1080, 1920
 
 
-def make_pad(seconds, path, seed=7):
-    sr = 44100
-    n = int(sr * seconds)
-    t = np.arange(n) / sr
-    rng = np.random.default_rng(seed)
-    base = rng.choice([110.0, 123.47, 130.81, 146.83])  # A2, B2, C3, D3
-    ratios = [1, 1.5, 2, 3, 2.5]  # 근음, 5도, 옥타브, 12도, 10도
-    out = np.zeros(n)
-    for i, r in enumerate(ratios):
-        f = base * r
-        lfo = 1 + 0.004 * np.sin(2 * math.pi * (0.05 + 0.02 * i) * t + i)
-        amp = 0.5 / (i + 1)
-        out += amp * np.sin(2 * math.pi * f * lfo * t)
-        out += amp * 0.4 * np.sin(2 * math.pi * f * 1.003 * t + 0.7 * i)
-    # 느린 숨쉬기
-    out *= 0.75 + 0.25 * np.sin(2 * math.pi * 0.08 * t)
-    # 페이드
-    fade = int(sr * 1.5)
-    env = np.ones(n)
-    env[:fade] = np.linspace(0, 1, fade)
-    env[-fade:] = np.linspace(1, 0, fade)
-    out *= env
-    out = out / np.max(np.abs(out)) * 0.18
-    data = (out * 32767).astype(np.int16)
-    with wave.open(str(path), "wb") as w:
-        w.setnchannels(1)
-        w.setsampwidth(2)
-        w.setframerate(sr)
-        w.writeframes(data.tobytes())
-
+def make_pad(seconds, path, seed=7, style=None):
+    """배경 음악. 2026-10-31부터 밝은 숏폼용 자체 제작 곡(tools/music.py)으로 바꿨다.
+    style이 없으면 seed로 bright, playful, chill 가운데 하나를 고른다(chill은 덜 나오게)."""
+    from music import make_track
+    if style is None:
+        style = ["bright", "playful", "bright", "chill"][seed % 4]
+    return make_track(seconds, path, style=style, seed=seed)
 
 def main():
     folder = Path(sys.argv[1])

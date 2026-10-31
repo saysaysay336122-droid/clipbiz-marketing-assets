@@ -50,8 +50,8 @@ jobs:
       - name: 렌더
         if: steps.check.outputs.need == 'true'
         run: python tools/build_week.py "$(cat "$RUNNER_TEMP/src")"
-      - name: 올리기
-        if: steps.check.outputs.need == 'true'
+      - name: 올리기(시험 실행은 올리지 않는다)
+        if: steps.check.outputs.need == 'true' && github.event_name != 'push'
         run: |
           git config user.name clipbiz
           git config user.email clipbiz@naver.com

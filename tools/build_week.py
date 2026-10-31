@@ -10,10 +10,11 @@ GitHub Actions(.github/workflows/render.yml)가 돌린다. 토요일 정기 작�
 시트 형식(첫 줄은 머리글)
   A 폴더   w/YYMMDD(그 주 월요일), m/YYMM(네이버 원고 카드), docs(인사이트 블로그 글)
   B ID     MK-YYMMDD-번호. docs는 파일 이름
-  C 종류   cards, short, post
+  C 종류   cards, short, cardreel, post
   D 내용   JSON
            cards: render_cards.py spec의 한 항목(장 목록)
            short: render_short.py spec. 장면의 src 대신 "pexels": "<영상 번호>" 또는 "photo": "<images.pexels.com 주소>"
+           cardreel: {"from": "<같은 폴더 cards 항목 ID>", "sec": 3.6}  카드를 이어 붙인 영상(실사 소재를 못 구했을 때)
            post:  {"path": "docs/_posts/YYYY-MM-DD-slug.md", "text": "마크다운 전체"}
   E 적은 시각(참고용)
 
@@ -49,7 +50,7 @@ def load_rows(url):
         if len(r) < 4:
             continue
         folder, mid, kind, body = r[0].strip(), r[1].strip(), r[2].strip(), r[3]
-        if not folder or not mid or not FOLDER_RE.match(folder) or kind not in ("cards", "short", "post"):
+        if not folder or not mid or not FOLDER_RE.match(folder) or kind not in ("cards", "short", "cardreel", "post"):
             continue
         by.setdefault(folder, []).append((mid, kind, body))
     return by
@@ -117,26 +118,13 @@ def build(folder, items):
     stock.mkdir(exist_ok=True)
     result = {"rev": rev_of(items), "built_at": datetime.datetime.now(KST).isoformat(timespec="seconds"),
               "items": {}, "errors": {}}
-    cards = {}
+    parsed = []
     for mid, kind, body in items:
         try:
-            data = json.loads(body)
+            parsed.append((mid, kind, json.loads(body)))
         except Exception as e:
             result["errors"][mid] = f"JSON 오류: {e}"
-            continue
-        try:
-            if kind == "cards":
-                cards[mid] = data
-            elif kind == "short":
-                result["items"][mid] = build_short(folder, mid, data, stock)
-            elif kind == "post":
-                path = data.get("path", "")
-                if folder != "docs" or not POST_RE.match(path):
-                    raise RuntimeError("post는 docs 폴더, docs/_posts/YYYY-MM-DD-slug.md 경로만 쓴다")
-                (ROOT / path).write_text(data["text"], encoding="utf-8")
-                result["items"][mid] = [path]
-        except Exception as e:
-            result["errors"][mid] = str(e)[-500:]
+    cards = {mid: data for mid, kind, data in parsed if kind == "cards"}
     if cards:
         spec_all = out / "spec.json"
         merged = json.loads(spec_all.read_text(encoding="utf-8")) if spec_all.exists() else {}
@@ -153,6 +141,26 @@ def build(folder, items):
                 result["errors"][mid] = str(e)[-500:]
         finally:
             tmp.unlink(missing_ok=True)
+    for mid, kind, data in parsed:
+        try:
+            if kind == "short":
+                result["items"][mid] = build_short(folder, mid, data, stock)
+            elif kind == "cardreel":
+                src = data["from"]
+                if src not in result["items"]:
+                    raise RuntimeError(f"카드 {src}가 이번 렌더에 없다")
+                mp4 = out / f"{mid}_reel.mp4"
+                run([sys.executable, "tools/render_reel.py", str(out.relative_to(ROOT)), src, str(mp4.relative_to(ROOT)),
+                     str(data.get("sec", 3.6))])
+                result["items"][mid] = [mp4.name]
+            elif kind == "post":
+                path = data.get("path", "")
+                if folder != "docs" or not POST_RE.match(path):
+                    raise RuntimeError("post는 docs 폴더, docs/_posts/YYYY-MM-DD-slug.md 경로만 쓴다")
+                (ROOT / path).write_text(data["text"], encoding="utf-8")
+                result["items"][mid] = [path]
+        except Exception as e:
+            result["errors"][mid] = str(e)[-500:]
     for wav in out.glob("*.wav"):
         wav.unlink()
     if folder != "docs":

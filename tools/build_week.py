@@ -10,11 +10,12 @@ GitHub Actions(.github/workflows/render.yml)가 돌린다. 토요일 정기 작�
 시트 형식(첫 줄은 머리글)
   A 폴더   w/YYMMDD(그 주 월요일), m/YYMM(네이버 원고 카드), docs(인사이트 블로그 글)
   B ID     MK-YYMMDD-번호. docs는 파일 이름
-  C 종류   cards, short, cardreel, post
+  C 종류   cards, short, cardreel, chat, post
   D 내용   JSON
            cards: render_cards.py spec의 한 항목(장 목록)
            short: render_short.py spec. 장면의 src 대신 "pexels": "<영상 번호>" 또는 "photo": "<images.pexels.com 주소>"
            cardreel: {"from": "<같은 폴더 cards 항목 ID>", "sec": 3.6}  카드를 이어 붙인 영상(실사 소재를 못 구했을 때)
+           chat:  render_chat.py spec(메신저 대화 상황극). 영상 <ID>_reel.mp4와 카드 <ID>_1.png...를 함께 만든다
            post:  {"path": "docs/_posts/YYYY-MM-DD-slug.md", "text": "마크다운 전체"}
   E 적은 시각(참고용)
 
@@ -50,7 +51,7 @@ def load_rows(url):
         if len(r) < 4:
             continue
         folder, mid, kind, body = r[0].strip(), r[1].strip(), r[2].strip(), r[3]
-        if not folder or not mid or not FOLDER_RE.match(folder) or kind not in ("cards", "short", "cardreel", "post"):
+        if not folder or not mid or not FOLDER_RE.match(folder) or kind not in ("cards", "short", "cardreel", "chat", "post"):
             continue
         by.setdefault(folder, []).append((mid, kind, body))
     return by
@@ -145,6 +146,15 @@ def build(folder, items):
         try:
             if kind == "short":
                 result["items"][mid] = build_short(folder, mid, data, stock)
+            elif kind == "chat":
+                data["id"] = mid
+                spec_path = out / f"{mid}_chat.json"
+                spec_path.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
+                mp4 = out / f"{mid}_reel.mp4"
+                run([sys.executable, "tools/render_chat.py", str(spec_path.relative_to(ROOT)), str(mp4.relative_to(ROOT)),
+                     "--cards", str(out.relative_to(ROOT))])
+                mf = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+                result["items"][mid] = [mp4.name, spec_path.name] + mf.get(mid, [])
             elif kind == "cardreel":
                 src = data["from"]
                 if src not in result["items"]:

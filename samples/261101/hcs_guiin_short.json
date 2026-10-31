@@ -1,0 +1,80 @@
+{
+ "theme": "hcs",
+ "style": "native",
+ "music": true,
+ "music_style": "playful",
+ "seed": 23,
+ "credit": "영상 Pexels",
+ "scenes": [
+  {
+   "start": 1,
+   "dur": 2.6,
+   "label": "오행별 반응",
+   "title": "신년 운세에\n'귀인이 온다'가 나왔다",
+   "pexels": "3626974"
+  },
+  {
+   "start": 2,
+   "dur": 2.3,
+   "label": "목",
+   "tone": "dark",
+   "title": "귀인 오는 길부터\n쓸어 둔다",
+   "pexels": "5592643"
+  },
+  {
+   "start": 3,
+   "dur": 2.5,
+   "label": "화",
+   "tone": "dark",
+   "title": "동창 단톡방에 공지\n'나 귀인 온다'",
+   "pexels": "8546869"
+  },
+  {
+   "start": 0.5,
+   "dur": 2.2,
+   "label": "토",
+   "tone": "dark",
+   "title": "올 사람은 온다\n차나 한잔",
+   "pexels": "5935128"
+  },
+  {
+   "start": 4,
+   "dur": 2.5,
+   "label": "금",
+   "tone": "dark",
+   "title": "귀인 기준표 작성 중",
+   "body": "1. 약속 시간 지킬 것",
+   "pexels": "6100897"
+  },
+  {
+   "start": 5,
+   "dur": 2.5,
+   "label": "수",
+   "tone": "dark",
+   "title": "새벽 3시\n귀인이 누군지 추리 중",
+   "pexels": "8070886"
+  },
+  {
+   "start": 1,
+   "dur": 2.3,
+   "label": "1월 3일, 화의 집",
+   "title": "띵동\n누가 왔다",
+   "pexels": "7701946"
+  },
+  {
+   "start": 15.2,
+   "dur": 3.0,
+   "label": "화의 집",
+   "title": "공지 보고 온\n동창 민호",
+   "body": "돈 빌리러 왔다고 함",
+   "pexels": "7701946"
+  },
+  {
+   "end": true,
+   "dur": 3.4,
+   "title": "귀인일까\n민호일까",
+   "body": "동창 단톡방 3화에서 계속\n재미와 자기 성찰을 위한 풀이예요",
+   "foot": "hongchaksa.kr 무료 풀이"
+  }
+ ]
+}

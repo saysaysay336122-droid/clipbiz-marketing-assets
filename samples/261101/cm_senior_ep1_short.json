@@ -8,54 +8,55 @@
  "scenes": [
   {
    "start": 1,
-   "dur": 2.8,
+   "dur": 2.9,
    "label": "기대",
    "tone": "light",
    "title": "안 쓰는 설비\n사진 한 장 올리면 끝",
+   "body": "사장님도 정리하라고 하심",
    "pexels": "35069369"
   },
   {
    "start": 20,
-   "dur": 2.6,
+   "dur": 2.5,
    "label": "현실",
    "title": "그 설비 앞에\n자재가 산처럼",
    "pexels": "4727768"
   },
   {
-   "start": 1,
-   "dur": 2.6,
-   "label": "기대",
-   "tone": "light",
-   "title": "모델명이랑 연식은\n서류에 있겠지",
-   "pexels": "7710418"
-  },
-  {
    "start": 0.5,
-   "dur": 2.7,
+   "dur": 2.5,
    "label": "현실",
    "title": "명판 닦는 중",
    "body": "20분째",
    "pexels": "18101973"
   },
   {
-   "dur": 2.6,
+   "dur": 2.4,
    "label": "드디어",
    "tone": "dark",
    "title": "명판 찾았다\n2009년식",
    "photo": "https://images.pexels.com/photos/5846098/pexels-photo-5846098.jpeg"
   },
   {
+   "start": 1,
    "dur": 2.8,
-   "label": "그런데",
+   "label": "그 시절 구매 서류",
    "tone": "dark",
-   "title": "우리 회사보다\n2년 선배",
-   "photo": "https://images.pexels.com/photos/5846098/pexels-photo-5846098.jpeg"
+   "title": "구매 담당자\n신입 시절 사장님",
+   "pexels": "7710418"
+  },
+  {
+   "start": 12,
+   "dur": 2.6,
+   "label": "사장님",
+   "title": "\"그건 안 팔아\"",
+   "pexels": "6100897"
   },
   {
    "end": true,
    "dur": 3.6,
-   "title": "다음 화\n선배 설비의 새 주인",
-   "body": "사진만 보내 주세요\n등록은 클립마켓이 도와드려요\n2026년 12월 31일까지 체결한 거래는 이용료 없음",
+   "title": "사장님 설득은\n다음 화에서",
+   "body": "안 쓰는 설비, 사진만 보내 주세요\n등록은 클립마켓이 도와드려요\n2026년 12월 31일까지 체결한 거래는 이용료 없음",
    "foot": "clipmarket.kr"
   }
  ]

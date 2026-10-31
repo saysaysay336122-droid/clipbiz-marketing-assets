@@ -85,14 +85,16 @@ def render_pngs(theme, scenes, workdir):
         hp = workdir / f"ov{i}.html"
         hp.write_text(html, encoding="utf-8")
         pages.append((str(hp), str(workdir / f"ov{i}.png"), bool(sc.get("end"))))
-    js = workdir / "shot.js"
-    js.write_text("""
-const {chromium}=require('playwright');
-(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:%d,height:%d}});
-for(const [h,o,end] of %s){await p.goto('file://'+h);await p.waitForTimeout(250);
-await p.screenshot({path:o,omitBackground:!end});}
-await b.close();})();""" % (W, H, json.dumps(pages)), encoding="utf-8")
-    subprocess.run(["node", str(js)], check=True, capture_output=True, cwd="/home/claude")
+    # 카드 렌더러와 같은 파이썬 Playwright를 쓴다(GitHub Actions에서도 같은 결과가 나오게).
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as pw:
+        b = pw.chromium.launch()
+        p = b.new_page(viewport={"width": W, "height": H})
+        for h, o, end in pages:
+            p.goto("file://" + h)
+            p.wait_for_timeout(250)
+            p.screenshot(path=o, omit_background=not end)
+        b.close()
     return [Path(o) for _, o, _ in pages]
 
 

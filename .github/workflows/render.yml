@@ -1,0 +1,62 @@
+name: 카드와 영상 자동 렌더
+
+# 토요일 정기 작업 세션이 구글 시트 '클립비즈_제작지시'에 적은 내용을 받아
+# 카드 이미지, 실사 영상, 인사이트 블로그 글 파일을 만들고 main에 올린다.
+# 시트 CSV 주소는 저장소 비밀값 SHEET_CSV에 둔다(공개 저장소라 파일에 적지 않는다).
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/render.yml"
+      - "tools/build_week.py"
+      - "tools/selftest.csv"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: render
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      SHEET_CSV: ${{ secrets.SHEET_CSV }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 렌더할 것이 있는지 확인
+        id: check
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then SRC="file://$GITHUB_WORKSPACE/tools/selftest.csv"; else SRC="$SHEET_CSV"; fi
+          if [ -z "$SRC" ]; then echo "need=false" >> "$GITHUB_OUTPUT"; echo "SHEET_CSV 비밀값이 없다"; exit 0; fi
+          echo "$SRC" > "$RUNNER_TEMP/src"
+          python tools/build_week.py "$SRC" --check | tee -a "$GITHUB_OUTPUT"
+      - name: 도구 설치
+        if: steps.check.outputs.need == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk ffmpeg > /dev/null
+          fc-list | grep -c "CJK KR" || true
+          pip install -q playwright pillow numpy
+          python -m playwright install --with-deps chromium > /dev/null
+      - name: 렌더
+        if: steps.check.outputs.need == 'true'
+        run: python tools/build_week.py "$(cat "$RUNNER_TEMP/src")"
+      - name: 올리기
+        if: steps.check.outputs.need == 'true'
+        run: |
+          git config user.name clipbiz
+          git config user.email clipbiz@naver.com
+          git add -A w m docs 2>/dev/null || git add -A w
+          if git diff --cached --quiet; then echo "바뀐 파일 없음"; exit 0; fi
+          git commit -q -m "카드 자동 렌더 $(TZ=Asia/Seoul date +%y%m%d-%H%M)"
+          git pull -q --rebase origin main
+          git push -q origin HEAD:main

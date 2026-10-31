@@ -7,6 +7,7 @@ tools/render_cards.py spec.json을 1080x1350 카드 이미지로 만든다
 tools/render_reel.py 카드 이미지를 1080x1920 릴스 영상으로 만든다
 tools/make_qr.py 우편 안내문용 QR 이미지를 만든다
 tools/render_short.py 실사 영상 위에 글을 얹어 릴스와 쇼츠(1080x1920)를 만든다
+tools/make_preview.py 한 주 게시물 미리보기 페이지(Claude 아티팩트용)를 만든다. 입력은 w/YYMMDD/posts.json
 tools/build_week.py 구글 시트 '클립비즈_제작지시'를 읽어 카드, 영상, 블로그 글 파일을 만든다
 .github/workflows/render.yml 15분마다 제작지시 시트를 확인해 build_week.py를 돌리고 main에 올린다(시트 주소는 비밀값 SHEET_CSV)
 docs/ 클립비즈 인사이트 블로그 https://insight.clipbiz.kr (GitHub Pages, Jekyll). 글은 docs/_posts/ 에 둔다

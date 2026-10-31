@@ -8,6 +8,7 @@ spec.json 예
   "theme": "hcs",                       # hcs(홍책사), hic(하이클립), b2b(clipbiz2026)
   "credit": "영상 Pexels",               # 끝 화면 아래 작은 글. 비우면 안 넣는다
   "music": true,                        # 프로그램이 만든 밝은 배경 음악(tools/music.py). false면 무음. music_style로 bright, playful, chill 지정 가능
+  "style": "native",                    # 선택. 릴스식 흰 글상자 자막(가운데 위쪽), 빠른 전환. 장면마다 label(꼬리표), tone(accent, dark, light), y(글 위치)
   "scenes": [
     {"src": "stock/pexels_5739810.mp4", "start": 0, "dur": 4.2,
      "kicker": "일간", "title": "내 사주에서\n나를 나타내는 글자", "body": "태어난 날의 천간이 일간이에요."},
@@ -76,12 +77,41 @@ def overlay_html(t, sc, end=False):
     </style></head><body>{band}<div class='box'>{kicker}<div class='title'>{esc(sc.get('title'))}</div>{body}{foot}</div>{credit}</body></html>"""
 
 
-def render_pngs(theme, scenes, workdir):
+def native_html(t, sc):
+    """릴스와 쇼츠에서 사람들이 직접 올리는 글자 모양. 흰 글상자에 검은 굵은 글씨, 화면 가운데 위쪽.
+    label이 있으면 위에 작은 꼬리표(기대, 현실, 목, 화 같은 구분), sub가 있으면 아래에 흰 글씨 한 줄."""
+    lines = [ln for ln in (sc.get("title") or "").split("\n") if ln.strip()]
+    cap = "<br>".join(f"<span>{esc(ln)}</span>" for ln in lines)
+    tone = sc.get("tone", "accent")
+    chip_bg = {"accent": t["accent"], "dark": "#111111", "light": "#FFFFFF"}.get(tone, t["accent"])
+    chip_fg = "#111111" if tone == "light" else "#FFFFFF"
+    label = f"<div class='label'>{esc(sc.get('label'))}</div>" if sc.get("label") else ""
+    sub = f"<div class='sub'>{esc(sc.get('body'))}</div>" if sc.get("body") else ""
+    top = int(sc.get("y", 520))
+    return f"""<!doctype html><html><head><meta charset='utf-8'><style>
+    html,body{{margin:0;padding:0}}
+    body{{width:{W}px;height:{H}px;background:transparent;position:relative;overflow:hidden;font-family:'Noto Sans CJK KR'}}
+    .shade{{position:absolute;left:0;right:0;top:0;height:900px;background:linear-gradient(to bottom, rgba(0,0,0,.28), rgba(0,0,0,0))}}
+    .wrap{{position:absolute;left:80px;right:160px;top:{top}px;text-align:center}}
+    .label{{display:inline-block;font-weight:700;font-size:38px;letter-spacing:1px;padding:8px 28px;border-radius:999px;
+      background:{chip_bg};color:{chip_fg};margin-bottom:28px}}
+    .cap{{font-weight:900;font-size:62px;line-height:1.62;word-break:keep-all;letter-spacing:-1px}}
+    .cap span{{background:#FFFFFF;color:#111111;padding:4px 22px;border-radius:14px;
+      -webkit-box-decoration-break:clone;box-decoration-break:clone}}
+    .sub{{margin-top:26px;font-weight:700;font-size:38px;line-height:1.45;color:#FFFFFF;word-break:keep-all;
+      text-shadow:0 2px 12px rgba(0,0,0,.75)}}
+    </style></head><body><div class='shade'></div><div class='wrap'>{label}<div class='cap'>{cap}</div>{sub}</div></body></html>"""
+
+
+def render_pngs(theme, scenes, workdir, native=False):
     """장면마다 글 겹침용 PNG(투명)와 끝 화면 PNG를 Playwright로 그린다."""
     t = THEMES[theme]
     pages = []
     for i, sc in enumerate(scenes):
-        html = overlay_html(t, sc, end=bool(sc.get("end")))
+        if native and not sc.get("end"):
+            html = native_html(t, sc)
+        else:
+            html = overlay_html(t, sc, end=bool(sc.get("end")))
         hp = workdir / f"ov{i}.html"
         hp.write_text(html, encoding="utf-8")
         pages.append((str(hp), str(workdir / f"ov{i}.png"), bool(sc.get("end"))))
@@ -116,13 +146,15 @@ def main():
         for sc in scenes:
             if sc.get("end"):
                 sc.setdefault("credit", spec["credit"])
+    native = spec.get("style") == "native"
+    xf = float(spec.get("xfade", 0.12 if native else XFADE))
     durs = [float(sc.get("dur", 4.0)) for sc in scenes]
-    total = sum(durs) - XFADE * (len(scenes) - 1)
+    total = sum(durs) - xf * (len(scenes) - 1)
     if total > 60:
         sys.exit(f"길이 {total:.1f}초. 60초를 넘는다.")
     root = spec_path.resolve().parent.parent.parent if spec_path.resolve().parent.name.startswith(("w", "m")) else Path.cwd()
     workdir = Path(tempfile.mkdtemp(prefix="short_"))
-    pngs = render_pngs(theme, scenes, workdir)
+    pngs = render_pngs(theme, scenes, workdir, native=native)
 
     inputs, chains = [], []
     n_in = 0
@@ -154,15 +186,16 @@ def main():
         n_in += 1
         chains.append(base)
         inputs += ["-loop", "1", "-t", f"{d}", "-i", str(pngs[i])]
-        chains.append(f"[{n_in}:v]format=rgba,fade=t=in:st=0.15:d=0.45:alpha=1[o{i}]")
+        fin = "st=0.05:d=0.18" if native else "st=0.15:d=0.45"
+        chains.append(f"[{n_in}:v]format=rgba,fade=t=in:{fin}:alpha=1[o{i}]")
         chains.append(f"[b{i}][o{i}]overlay=0:0:shortest=1,format=yuv420p[v{i}]")
         n_in += 1
 
     cur = "v0"
     offset = 0.0
     for i in range(1, len(scenes)):
-        offset += durs[i - 1] - XFADE
-        chains.append(f"[{cur}][v{i}]xfade=transition=fade:duration={XFADE}:offset={offset:.3f}[x{i}]")
+        offset += durs[i - 1] - xf
+        chains.append(f"[{cur}][v{i}]xfade=transition=fade:duration={xf}:offset={offset:.3f}[x{i}]")
         cur = f"x{i}"
     maps = ["-map", f"[{cur}]"]
     audio_idx = None

@@ -1,0 +1,30 @@
+{
+ "theme": "hic",
+ "credit": "영상 Pexels",
+ "music": true,
+ "scenes": [
+  {
+   "src": "stock/pexels_8472307.mp4",
+   "start": 1,
+   "dur": 5.2,
+   "kicker": "공고를 읽다가",
+   "title": "컴퓨터 활용 가능,\n그것만으로는",
+   "body": "알 수 없는 것이 있어요"
+  },
+  {
+   "src": "stock/pexels_7652166.mp4",
+   "start": 1,
+   "dur": 5.2,
+   "kicker": "지원환경",
+   "title": "문서와\n화면 접근성",
+   "body": "내 설정으로 일할 수 있는지"
+  },
+  {
+   "end": true,
+   "dur": 3.8,
+   "title": "지원 전에\n확인해요",
+   "body": "구직자 이용료는 없어요",
+   "foot": "hiclip.kr"
+  }
+ ]
+}

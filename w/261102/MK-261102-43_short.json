@@ -1,0 +1,29 @@
+{
+ "theme": "hic",
+ "credit": "영상 Pexels",
+ "music": true,
+ "scenes": [
+  {
+   "src": "stock/pexels_8062335.mp4",
+   "start": 0.5,
+   "dur": 5.0,
+   "kicker": "인사담당자께",
+   "title": "공고만 올려 두기엔\n연말이 짧습니다"
+  },
+  {
+   "src": "stock/pexels_5742408.mp4",
+   "start": 1,
+   "dur": 5.2,
+   "kicker": "인재 찾기",
+   "title": "구직정보도\n함께 봅니다",
+   "body": "실명 대신 표시명으로 보입니다"
+  },
+  {
+   "end": true,
+   "dur": 3.8,
+   "title": "기업 공고 이용료,\n올해는 받지 않습니다",
+   "body": "2026년 12월 31일까지",
+   "foot": "hiclip.kr"
+  }
+ ]
+}

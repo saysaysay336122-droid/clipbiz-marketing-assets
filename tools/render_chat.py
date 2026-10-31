@@ -51,7 +51,19 @@ THEMES = {
                 me="#C64016", mefg="#FFFFFF", sub="#485868", accent="#C64016", endbg="#14202E", endfg="#F5F6F3", endsub="#C9D1DA"),
     "hcs": dict(bg="#1D2824", head="#16201C", headfg="#F2EFE6", other="#2B3833", otherfg="#F2EFE6",
                 me="#B5342A", mefg="#F7F1EA", sub="#A9B3AD", accent="#D9A441", endbg="#16201C", endfg="#F2EFE6", endsub="#A9B3AD"),
+    # 실제 휴대폰 메신저처럼 보이는 밝은 화면(특정 앱의 색과 모양은 따라 하지 않는다)
+    "msg": dict(bg="#DDE4EB", head="#F5F7F9", headfg="#141A21", other="#FFFFFF", otherfg="#141A21",
+                me="#CFE2FF", mefg="#0F1B2D", sub="#5A6672", accent="#1A73E8", endbg="#141A21", endfg="#FFFFFF", endsub="#C9D1DA"),
 }
+HOOK_CSS = """.hk{position:absolute;left:70px;right:70px;top:760px;text-align:center;z-index:50}
+.hk span{display:inline;background:#111;color:#FFF;font-size:74px;font-weight:900;line-height:1.55;padding:6px 26px;border-radius:16px;letter-spacing:-1.5px;
+-webkit-box-decoration-break:clone;box-decoration-break:clone}"""
+
+
+def with_hook(page, hook, shake=(0, 0)):
+    lines = "<br>".join(f"<span>{esc(ln)}</span>" for ln in hook.split("\n") if ln.strip())
+    return page.replace("</style>", HOOK_CSS + "</style>", 1).replace(
+        "</body>", f"<div class='hk' style='transform:translate({shake[0]}px,{shake[1]}px)'>{lines}</div></body>")
 FONT = "'Noto Sans CJK KR', sans-serif"
 
 
@@ -69,7 +81,7 @@ def bubbles(t, spec, msgs, typing_from=None):
     out, prev = [], None
     for m in items:
         if m.get("note"):
-            out.append(f"<div class='note'>{esc(m['note'])}</div>")
+            out.append(f"<div class='note{' hit' if m.get('hit') else ''}'>{esc(m['note'])}</div>")
             prev = None
             continue
         who = m.get("from")
@@ -117,6 +129,7 @@ def chat_html(t, spec, msgs, typing_from=None, w=1080, h=1920, card=False, video
     .other .b{{background:{'rgba(255,255,255,.96)' if video else t['other']};color:{'#17222E' if video else t['otherfg']};border-top-left-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,{'.25' if video else '.06'})}}
     .me .b{{background:{t['me']};color:{t['mefg']};border-top-right-radius:12px}}
     .note{{align-self:center;font-size:30px;color:{sub};padding:8px 24px;border-radius:999px;border:2px solid {sub};opacity:.9;{shadow}}}
+    .note.hit{{font-size:36px;font-weight:700;color:#111;border-color:#111;background:rgba(255,255,255,.75);opacity:1}}
     .dots{{display:flex;gap:12px;align-items:center;height:58px}}
     .dots i{{width:15px;height:15px;border-radius:50%;background:currentColor;opacity:.45;display:block}}
     </style></head><body>
@@ -211,10 +224,17 @@ def main():
     frames = []  # (html, seconds, segment, clear)
     shown = []
     seg = 0
+    tags = []
     if video:
         frames.append((caption_html(t, spec.get("when"), spec.get("hook") or spec.get("room")), 1.8, 0, True))
+        tags.append([])
+    elif spec.get("hook"):
+        for k, sh in enumerate([(0, 0), (-10, 5), (8, -4), (0, 0)]):
+            frames.append((with_hook(chat_html(t, spec, []), spec["hook"], sh), 0.05 if k < 3 else 1.35, 0, False))
+            tags.append([("fx", "whoosh", 0.9)] if k == 0 else [])
     else:
         frames.append((chat_html(t, spec, []), 0.3, 0, False))
+        tags.append([])
     for m in msgs:
         if m.get("note"):
             if video:
@@ -223,14 +243,28 @@ def main():
                 shown = []
             else:
                 shown.append(m)
-                frames.append((chat_html(t, spec, shown), 1.2 + float(m.get("pause", 0)), seg, False))
+                d = 1.2 + float(m.get("pause", 0))
+                page = chat_html(t, spec, shown)
+                if m.get("hit"):
+                    frames.append((page, 0.08, seg, False))
+                    tags.append([("hit", m)])
+                    zoomed = page.replace("</style>", ".area{transform:scale(1.14);transform-origin:50% 88%}</style>", 1)
+                    frames.append((zoomed, d - 0.08, seg, False))
+                    tags.append([])
+                    continue
+                frames.append((page, d, seg, False))
+            tags.append([("hit", m)] if m.get("hit") else [("fx", "whoosh", 0.5)])
             continue
         frames.append((chat_html(t, spec, shown, typing_from=m.get("from"), video=video), 0.4, seg, False))
+        tags.append([])
         shown.append(m)
         frames.append((chat_html(t, spec, shown, video=video), 0.9 + 0.05 * len(m.get("text", "")) + float(m.get("pause", 0)), seg, False))
+        tags.append([("hit", m)] if m.get("hit") else [("fx", "pop", 0.55)])
     end = spec.get("end")
     if end:
-        frames.append(((end_video_html(t, end) if video else end_html(t, end)), float(end.get("dur", 3.4)), seg, False))
+        et = THEMES.get(spec.get("end_theme", ""), t)
+        frames.append(((end_video_html(et, end) if video else end_html(et, end)), float(end.get("dur", 3.4)), seg, False))
+        tags.append([("fx", "whoosh", 0.5)])
     total = sum(f[1] for f in frames)
     if total > 60:
         sys.exit(f"길이 {total:.1f}초. 60초를 넘는다.")
@@ -247,6 +281,21 @@ def main():
         music = work / "music.wav"
         make_pad(total + 0.5, music, seed=spec.get("seed", 11),
                  style=spec.get("music_style") or {"hcs": "playful"}.get(spec.get("theme", "b2b"), "bright"))
+        if spec.get("sfx"):
+            import sfx
+            events, cuts, clock = [], [], 0.0
+            for fr, tg in zip(frames, tags):
+                for item in tg:
+                    if item[0] == "fx":
+                        events.append((clock, item[1], item[2]))
+                    else:
+                        hold = float(item[1].get("hold", 1.8))
+                        cuts.append((max(0.0, clock - 0.45), clock + hold))
+                        events += [(max(0.0, clock - 0.45), "scratch", 0.6), (clock, "boom", 0.9)]
+                clock += fr[1]
+            mixed = work / "mix.wav"
+            sfx.mix(total, mixed, music=music, music_gain=0.45, events=events, cuts=cuts, seed=spec.get("seed", 11))
+            music = mixed
 
     if not video:
         cmd = ["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(concat)]

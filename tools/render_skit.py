@@ -8,7 +8,8 @@
 
 공통 spec
   theme       끝 화면 색(b2b, hcs, hic). render_chat.THEMES
-  hook        첫 1.5초 큰 글씨(두 줄 이하)
+  hook        처음 HOOK_SEC초 동안 겹쳐 두는 큰 글씨 띠(두 줄 이하). 첫 검색어나 첫 물건은 0초에 이미 화면에 있다
+              (2026-11-02 대표 승인: 빈 화면에 제목만 1.5초 세우지 않는다)
   cont        반전 뒤 '다음 화' 한 줄(선택)
   notify      [{"from": "팀장님", "text": "..."}] 반전 때 위에서 내려오는 알림(선택)
   end         {"title", "body", "foot"} 끝 화면
@@ -35,6 +36,8 @@ from render_chat import THEMES, end_html, shoot  # noqa: E402
 import sfx  # noqa: E402
 
 W, H = 1080, 1920
+HOOK_SEC = 1.8
+SHAKE = [(0, 0), (-10, 5), (8, -4), (0, 0)]
 FONT = "'Noto Sans CJK KR', sans-serif"
 ROOT = Path(__file__).resolve().parent.parent
 TIER_COLORS = {"SSS": "#FFD54A", "S": "#FF7F7F", "A": "#FFBF7F", "B": "#FFDF7F", "C": "#FFFF7F", "D": "#BFFF7F", "F": "#7FBFFF"}
@@ -70,8 +73,8 @@ body{{width:{W}px;height:{H}px;font-family:{FONT};position:relative;overflow:hid
 .bars{{display:flex;gap:4px;align-items:flex-end;height:26px}}.bars i{{display:block;width:7px;background:currentColor;border-radius:2px}}
 .batt{{width:52px;height:26px;border:3px solid currentColor;border-radius:7px;position:relative;padding:3px}}.batt i{{display:block;height:100%;width:62%;background:currentColor;border-radius:2px}}
 .fic{{position:absolute;left:0;right:0;bottom:250px;text-align:center;font-size:24px;opacity:.55}}
-.hook{{position:absolute;left:70px;right:70px;top:760px;text-align:center}}
-.hook span{{display:inline;background:#111;color:#FFF;font-size:76px;font-weight:900;line-height:1.55;padding:6px 26px;border-radius:16px;letter-spacing:-1.5px;
+.hook{{position:absolute;left:60px;right:150px;top:1060px;text-align:center;z-index:40}}
+.hook span{{display:inline;background:#111;color:#FFF;font-size:64px;font-weight:900;line-height:1.5;padding:4px 22px;border-radius:14px;letter-spacing:-1.2px;
   -webkit-box-decoration-break:clone;box-decoration-break:clone}}
 .dim{{position:absolute;inset:0;background:rgba(0,0,0,.45)}}
 .cont{{position:absolute;left:80px;right:80px;top:880px;text-align:center}}
@@ -170,15 +173,18 @@ def build_search(spec, rnd):
             events.append((t + off, name, g))
         t += d
 
-    # 훅: 빈 화면 위 큰 글씨, 살짝 흔들림
-    for k, sh in enumerate([(0, 0), (-10, 5), (8, -4), (0, 0)]):
-        add(search_page(spec, [], hook=True, shake=sh), 0.05 if k < 3 else 1.35, [(0, "whoosh", 0.9)] if k == 0 else [])
-    rows = []
-    for r in spec["history"]:
+    # 훅: 첫 검색어가 이미 있는 화면 위에 큰 글씨 띠, 살짝 흔들림. 띠는 HOOK_SEC초까지 겹쳐 둔다
+    hist = spec["history"]
+    rows = [hist[0]]
+    d0 = 0.62 + 0.032 * len(hist[0]["q"])
+    for k, sh in enumerate(SHAKE):
+        add(search_page(spec, rows, newest=True, hook=True, shake=sh), 0.05 if k < 3 else d0,
+            [(0, "whoosh", 0.9), (0, "pop", 0.7)] if k == 0 else [])
+    for r in hist[1:]:
         rows.insert(0, r)
         d = 0.62 + 0.032 * len(r["q"])
-        add(search_page(spec, rows, newest=True), d * 0.55, [(0, "pop", 0.7)])
-        add(search_page(spec, rows), d * 0.45)
+        add(search_page(spec, rows, newest=True, hook=t < HOOK_SEC), d * 0.55, [(0, "pop", 0.7)])
+        add(search_page(spec, rows, hook=t < HOOK_SEC), d * 0.45)
     # 타이핑
     ty = spec.get("typing", {})
     text = ty.get("text", "")
@@ -264,7 +270,7 @@ def tier_page(spec, tiers, placed, cache, card=None, card_pos=None, hook=False, 
     hook_html = ""
     if hook:
         lines = [ln for ln in spec["hook"].split("\n") if ln.strip()]
-        hook_html = (f"<div class='hook' style='top:1180px;transform:translate({shake[0]}px,{shake[1]}px)'>"
+        hook_html = (f"<div class='hook' style='top:215px;transform:translate({shake[0]}px,{shake[1]}px)'>"
                      + "<br>".join(f"<span style='background:#FFF;color:#111'>{esc(ln)}</span>" for ln in lines) + "</div>")
     over = "<div class='dim'></div>" if dim else ""
     if cont and spec.get("cont"):
@@ -289,31 +295,38 @@ def build_tier(spec, rnd):
 
     tiers = list(spec.get("tiers", ["S", "A", "B", "C", "F"]))
     placed = {k: [] for k in tiers}
-    for k, sh in enumerate([(0, 0), (-10, 5), (8, -4), (0, 0)]):
-        add(tier_page(spec, tiers, placed, cache, hook=True, shake=sh), 0.05 if k < 3 else 1.4, [(0, "whoosh", 0.9)] if k == 0 else [])
+    def hk():
+        return t < HOOK_SEC
 
-    def present(it, tiers_now, extra_wait=0.0, label=None, say=None, fx_in="whoosh"):
+    def present(it, tiers_now, extra_wait=0.0, label=None, say=None, fx_in="whoosh", opening=False):
         c = dict(it)
         if label:
             c["label"] = label
-        add(tier_page(spec, tiers_now, placed, cache, card=c, card_pos=(0, 760, 0.6)), 0.05, [(0, fx_in, 0.7)])
-        add(tier_page(spec, tiers_now, placed, cache, card=c, card_pos=(0, 640, 1.0)), 0.55 + 0.03 * len(c["label"]) + extra_wait)
+        hold = 0.55 + 0.03 * len(c["label"]) + extra_wait
+        if opening:
+            # 첫 물건은 0초에 이미 카드로 떠 있고, hook 띠가 비어 있는 위쪽 칸 위에 겹친다
+            for k, sh in enumerate(SHAKE):
+                add(tier_page(spec, tiers_now, placed, cache, card=c, card_pos=(0, 640, 1.0), hook=True, shake=sh),
+                    0.05 if k < 3 else hold, [(0, "whoosh", 0.9)] if k == 0 else [])
+        else:
+            add(tier_page(spec, tiers_now, placed, cache, card=c, card_pos=(0, 760, 0.6), hook=hk()), 0.05, [(0, fx_in, 0.7)])
+            add(tier_page(spec, tiers_now, placed, cache, card=c, card_pos=(0, 640, 1.0), hook=hk()), hold)
         if say:
             c["say_now"] = say
-            add(tier_page(spec, tiers_now, placed, cache, card=c, card_pos=(0, 640, 1.0)), 0.7 + 0.04 * len(say))
+            add(tier_page(spec, tiers_now, placed, cache, card=c, card_pos=(0, 640, 1.0), hook=hk()), 0.7 + 0.04 * len(say))
         return c
 
     def place(it, tiers_now):
         tr = it["tier"]
         idx = tiers_now.index(tr)
         ty = 200 + idx * 174 - 140
-        add(tier_page(spec, tiers_now, placed, cache, card=dict(it, say_now=None), card_pos=(-260, ty, 0.3)), 0.06)
+        add(tier_page(spec, tiers_now, placed, cache, card=dict(it, say_now=None), card_pos=(-260, ty, 0.3), hook=hk()), 0.06)
         placed.setdefault(tr, []).append(it)
-        add(tier_page(spec, tiers_now, placed, cache, flash=tr), 0.12, [(0, "thunk", 1.0)])
-        add(tier_page(spec, tiers_now, placed, cache), 0.25)
+        add(tier_page(spec, tiers_now, placed, cache, flash=tr, hook=hk()), 0.12, [(0, "thunk", 1.0)])
+        add(tier_page(spec, tiers_now, placed, cache, hook=hk()), 0.25)
 
-    for it in spec["items"]:
-        present(it, tiers, say=it.get("say"))
+    for n, it in enumerate(spec["items"]):
+        present(it, tiers, say=it.get("say"), opening=(n == 0))
         place(it, tiers)
 
     tw = spec.get("twist")

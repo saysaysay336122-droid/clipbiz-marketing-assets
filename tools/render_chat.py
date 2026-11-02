@@ -30,8 +30,11 @@ spec.json 예
 규칙
 1. 등장인물은 모두 가상 인물이다. 화면 위에 '등장인물은 가상 인물입니다'를 작게 넣는다(지우지 않는다).
 2. 메시지는 한 말풍선에 30자 안. 길면 두 개로 나눈다.
-3. 쇼츠 화면 단추와 겹치지 않게 아래 340px, 오른쪽 150px에는 말풍선을 두지 않는다.
-4. 메시지 하나가 보이는 시간은 0.9초 + 글자 수 x 0.05초(pause로 더할 수 있다). 앞에 입력 중 표시가 0.4초 나온다. 첫 메시지는 0.3초 만에 뜬다(첫 1초 안에 상황이 보이게). 전체 20초에서 35초를 권한다.
+3. 영상에서 말풍선은 화면 높이 15~70% 구간에만 둔다(아래 576px은 릴스와 쇼츠의 계정 이름, 캡션 자리). 오른쪽 150px도 비운다.
+   말풍선 글씨는 영상 63px, 카드 42px(2026-11-02 대표 승인: 휴대폰에서 읽히게 1.5배).
+4. 메시지 하나가 보이는 시간은 0.9초 + 글자 수 x 0.05초(pause로 더할 수 있다). 앞에 입력 중 표시가 0.4초 나온다. 전체 20초에서 35초를 권한다.
+   첫 메시지는 0초에 이미 떠 있다. hook은 빈 화면에 따로 세우지 않고 대화 위쪽 띠로 처음 HOOK_SEC초 동안 겹쳐 둔다
+   (2026-11-02: 제목만 1.5초 서 있던 영상의 평균 시청이 1.3~4.2초였다).
 5. 전체 60초 이하. 출력은 H.264 30fps yuv420p faststart, 자체 생성 음향(render_reel.make_pad).
 """
 import html
@@ -55,8 +58,9 @@ THEMES = {
     "msg": dict(bg="#DDE4EB", head="#F5F7F9", headfg="#141A21", other="#FFFFFF", otherfg="#141A21",
                 me="#CFE2FF", mefg="#0F1B2D", sub="#5A6672", accent="#1A73E8", endbg="#141A21", endfg="#FFFFFF", endsub="#C9D1DA"),
 }
-HOOK_CSS = """.hk{position:absolute;left:70px;right:70px;top:760px;text-align:center;z-index:50}
-.hk span{display:inline;background:#111;color:#FFF;font-size:74px;font-weight:900;line-height:1.55;padding:6px 26px;border-radius:16px;letter-spacing:-1.5px;
+HOOK_SEC = 1.8
+HOOK_CSS = """.hk{position:absolute;left:56px;right:150px;top:335px;text-align:center;z-index:50}
+.hk span{display:inline;background:#111;color:#FFF;font-size:62px;font-weight:900;line-height:1.5;padding:4px 22px;border-radius:14px;letter-spacing:-1.2px;
 -webkit-box-decoration-break:clone;box-decoration-break:clone}"""
 
 
@@ -101,8 +105,9 @@ def bubbles(t, spec, msgs, typing_from=None):
 
 
 def chat_html(t, spec, msgs, typing_from=None, w=1080, h=1920, card=False, video=False):
-    bottom = 120 if card else 340
+    bottom = 120 if card else 576
     right = 72 if card else 150
+    k = 1.0 if card else 1.5  # 영상 말풍선 배율
     when = f"<div class='when'>{esc(spec.get('when'))}</div>" if spec.get("when") else ""
     bg = "transparent" if video else t["bg"]
     head = "rgba(10,14,20,.42)" if video else t["head"]
@@ -112,20 +117,20 @@ def chat_html(t, spec, msgs, typing_from=None, w=1080, h=1920, card=False, video
     *{{margin:0;padding:0;box-sizing:border-box}}
     body{{width:{w}px;height:{h}px;background:{bg};font-family:{FONT};position:relative;overflow:hidden}}
     .head{{position:absolute;left:0;right:0;top:0;height:{200 if card else 250}px;background:{head};color:{t['headfg'] if not video else '#FFFFFF'};
-      display:flex;flex-direction:column;justify-content:flex-end;padding:0 72px 28px}}
+      display:flex;flex-direction:column;justify-content:flex-end;padding:0 72px 28px;z-index:20}}
     .room{{font-size:44px;font-weight:700;letter-spacing:-0.5px}}
     .fic{{font-size:24px;opacity:.6;margin-top:6px}}
     .when{{position:absolute;left:0;right:0;top:{230 if card else 290}px;text-align:center;font-size:32px;color:{sub};font-weight:500;{shadow}}}
     .area{{position:absolute;left:56px;right:{right}px;top:{300 if card else 370}px;bottom:{bottom}px;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;overflow:hidden}}
-    .row{{display:flex;max-width:84%}}
-    .row.gap{{margin-top:18px}}
-    .row.other{{align-self:flex-start;align-items:flex-start;gap:16px}}
+    .row{{display:flex;max-width:{84 if card else 90}%}}
+    .row.gap{{margin-top:{18 * k:.0f}px}}
+    .row.other{{align-self:flex-start;align-items:flex-start;gap:{16 * k:.0f}px}}
     .row.me{{align-self:flex-end;justify-content:flex-end}}
     .col{{display:flex;flex-direction:column;align-items:flex-start;min-width:0}}
-    .av{{flex:0 0 76px;width:76px;height:76px;border-radius:30px;color:#FFFFFF;font-size:34px;font-weight:700;display:flex;align-items:center;justify-content:center}}
+    .av{{flex:0 0 {76 * k:.0f}px;width:{76 * k:.0f}px;height:{76 * k:.0f}px;border-radius:{30 * k:.0f}px;color:#FFFFFF;font-size:{34 * k:.0f}px;font-weight:700;display:flex;align-items:center;justify-content:center}}
     .av.ghost{{visibility:hidden}}
-    .name{{font-size:29px;color:{sub};margin:0 0 8px 6px;font-weight:500;{shadow}}}
-    .b{{font-size:42px;line-height:1.38;padding:22px 30px;border-radius:34px;word-break:keep-all;letter-spacing:-0.3px}}
+    .name{{font-size:{29 * k:.0f}px;color:{sub};margin:0 0 8px 6px;font-weight:500;{shadow}}}
+    .b{{font-size:{42 * k:.0f}px;line-height:1.34;padding:{22 * k:.0f}px {30 * k:.0f}px;border-radius:{34 * k:.0f}px;word-break:keep-all;letter-spacing:-0.3px}}
     .other .b{{background:{'rgba(255,255,255,.96)' if video else t['other']};color:{'#17222E' if video else t['otherfg']};border-top-left-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,{'.25' if video else '.06'})}}
     .me .b{{background:{t['me']};color:{t['mefg']};border-top-right-radius:12px}}
     .note{{align-self:center;font-size:30px;color:{sub};padding:8px 24px;border-radius:999px;border:2px solid {sub};opacity:.9;{shadow}}}
@@ -225,17 +230,24 @@ def main():
     shown = []
     seg = 0
     tags = []
+    start = 0
+    first = msgs[0] if msgs and not msgs[0].get("note") else None
     if video:
-        frames.append((caption_html(t, spec.get("when"), spec.get("hook") or spec.get("room")), 1.8, 0, True))
+        frames.append((caption_html(t, spec.get("when"), spec.get("hook") or spec.get("room")), 1.0, 0, True))
         tags.append([])
     elif spec.get("hook"):
+        # 첫 메시지는 0초에 이미 떠 있고, hook은 위쪽 띠로 겹친다(빈 화면에 제목만 세우지 않는다)
+        if first:
+            shown = [first]
+            start = 1
+        hold = (0.9 + 0.05 * len(first.get("text", "")) + float(first.get("pause", 0))) if first else 1.35
         for k, sh in enumerate([(0, 0), (-10, 5), (8, -4), (0, 0)]):
-            frames.append((with_hook(chat_html(t, spec, []), spec["hook"], sh), 0.05 if k < 3 else 1.35, 0, False))
-            tags.append([("fx", "whoosh", 0.9)] if k == 0 else [])
+            frames.append((with_hook(chat_html(t, spec, shown), spec["hook"], sh), 0.05 if k < 3 else hold, 0, False))
+            tags.append([("fx", "whoosh", 0.9), ("fx", "pop", 0.55)] if k == 0 else [])
     else:
         frames.append((chat_html(t, spec, []), 0.3, 0, False))
         tags.append([])
-    for m in msgs:
+    for m in msgs[start:]:
         if m.get("note"):
             if video:
                 seg += 1
@@ -265,6 +277,14 @@ def main():
         et = THEMES.get(spec.get("end_theme", ""), t)
         frames.append(((end_video_html(et, end) if video else end_html(et, end)), float(end.get("dur", 3.4)), seg, False))
         tags.append([("fx", "whoosh", 0.5)])
+    if spec.get("hook") and not video:
+        clock = 0.0
+        for i, fr in enumerate(frames[:-1] if end else frames):
+            if clock >= HOOK_SEC:
+                break
+            if "class='hk'" not in fr[0]:
+                frames[i] = (with_hook(fr[0], spec["hook"]),) + tuple(fr[1:])
+            clock += fr[1]
     total = sum(f[1] for f in frames)
     if total > 60:
         sys.exit(f"길이 {total:.1f}초. 60초를 넘는다.")

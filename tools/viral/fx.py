@@ -190,7 +190,7 @@ class Writer:
     def __init__(self, path, fps=FPS):
         self.p = subprocess.Popen(
             ["ffmpeg", "-y", "-v", "error", "-f", "rawvideo", "-pix_fmt", "rgba", "-s", f"{W}x{H}", "-r", str(fps),
-             "-i", "-", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p",
+             "-i", "-", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-maxrate", "8M", "-bufsize", "16M", "-pix_fmt", "yuv420p",
              "-movflags", "+faststart", str(path)],
             stdin=subprocess.PIPE)
 

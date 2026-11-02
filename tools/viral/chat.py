@@ -86,7 +86,7 @@ def render(spec, out, tmp):
             sc = scene_at(e["t"])
             mine = e["who"] == sc["me"]
             if "file" in e:
-                msgs.append(dict(t=e["t"], who=e["who"], file=e["file"], size=e.get("size", ""), w=560, h=132, mine=mine,
+                msgs.append(dict(t=e["t"], who=e["who"], file=e["file"], size=e.get("size", ""), w=640, h=132, mine=mine,
                                  unread=e.get("unread", sc["members"] - 1), fx=e.get("fx"), deleted=None, read_t=None,
                                  react=e.get("react"), scene=sc["t"]))
             else:
@@ -269,7 +269,10 @@ def render(spec, out, tmp):
                 fx.rrect(c, bx, by, m["w"], m["h"], 24, bcol)
                 fx.rrect(c, bx + 22, by + 24, 64, 84, 10, th["file"] if not mine else "#FFFFFF", 0.9)
                 fx.text(c, "DOC", bx + 54, by + 76, fx.font("black", 20), "#17395E")
-                fx.text(c, m["file"], bx + 108, by + 60, fx.font("bold", 34), fcol, align="left")
+                fn_ = fx.font("bold", 34)
+                while fn_.measureText(m["file"]) > m["w"] - 130 and fn_.getSize() > 22:
+                    fn_ = fx.font("bold", fn_.getSize() - 2)
+                fx.text(c, m["file"], bx + 108, by + 60, fn_, fcol, align="left")
                 fx.text(c, m["size"], bx + 108, by + 104, fx.font("regular", 28), fcol, 0.7, align="left")
             else:
                 fx.rrect(c, bx, by, m["w"], m["h"], 30, bcol)

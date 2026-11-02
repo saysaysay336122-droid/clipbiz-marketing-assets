@@ -22,6 +22,8 @@ import skia  # noqa: E402
 ITEMS = [("2009년", "선반", "#E8590C"), ("", "지게차", "#E9B949"), ("", "컴프레서", "#4C86C6"), ("", "용접기", "#D1495B"),
          ("예비", "부품", "#2A9D8F"), ("", "팔레트", "#9C7A54"), ("대형", "프린터", "#8D99AE"), ("사장님", "첫 차", "#7B5EA7")]
 SHELF, CAR = 0, 7
+LEAD_LINES = ["선두 2009년 선반, 16년 만의 햇빛", "선두 지게차, 원래 빠른 애", "선두 컴프레서, 압력 올라가는 중", "선두 용접기, 불꽃 튀는 추월",
+              "선두 예비 부품, 포장도 안 뜯고", "선두 팔레트, 네모가 구른다", "선두 대형 프린터, 종이 걸림 없음", "선두 사장님 첫 차, 출전 자격 논란"]
 R = 40
 FPS, SUB = 30, 4
 FINISH = 4960
@@ -236,11 +238,11 @@ def render(seed, out, tmp, ep=1):
         if said >= 3:
             break
         if not any(abs(tt - p[0]) < 2.2 for p in pops):
-            pops.append((tt, tt + 1.1, f"선두 {label(li)}", "#FFFFFF", 62))
+            pops.append((tt, tt + 1.3, LEAD_LINES[li], "#FFFFFF", 58))
             sfx_ev.append((tt, "whoosh", 0.6))
             said += 1
     pops.append((T_DQ, T_UP, "사장님\n그건 안 판다", "#FFFFFF", 70))
-    pops.append((T_UP, T_END, "2009년 선반\n16년 만에 1등", "#FFD54A", 84))
+    pops.append((T_UP, T_END, "2009년 선반 1등\n사장님 차는 실격, 선반은 처음 본 햇빛", "#FFD54A", 84))
     pops.sort()
     fixed = []
     for st, en, s, cc, sz in pops:
@@ -366,6 +368,9 @@ def render(seed, out, tmp, ep=1):
                 c.save()
                 c.translate(540, 1180)
                 c.scale(scl, scl)
+                if tail and not s.startswith("사장님"):
+                    while f2_.measureText(tail) > 960 and f2_.getSize() > 30:
+                        f2_ = fx.font("black", f2_.getSize() - 2)
                 bw = max(f_.measureText(head), f2_.measureText(tail) if tail else 0) + 70
                 bh = sz * 1.2 + (sz * 0.75 if tail else 0) + 30
                 fx.rrect(c, -bw / 2, -sz * 0.95 - 10, bw, bh, 26, "#05080A", 0.62 * a_)

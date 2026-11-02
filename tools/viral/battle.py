@@ -29,6 +29,8 @@ EL_COLOR = {"목": ("#2FB36B", "#1B7A47"), "화": ("#F0503F", "#A8261B"), "토":
 EL_TEXT = {"목": "#FFFFFF", "화": "#FFFFFF", "토": "#2A2112", "금": "#1C2128", "수": "#FFFFFF"}
 EL_PITCH = {"목": 60, "화": 62, "토": 64, "금": 67, "수": 69}
 SAENG = {"목": "화", "화": "토", "토": "금", "금": "수", "수": "목"}
+LAST_WORDS = ["을 조심해, 걔 내 동생 아님", "바람 쪽으로 누운 것뿐", "너무 밝았나", "촛불도 불이었다", "산도 깎이네",
+              "밟혀도 흙은 흙", "칼이 녹슬 줄이야", "보석은 원래 소수", "바다가 마른다고?", "이슬은 아침에 가요"]
 GEUK = {"목": "토", "토": "수", "수": "화", "화": "금", "금": "목"}
 
 R_BALL = 50
@@ -318,15 +320,14 @@ def render(seed, ep, out, tmp, title_kicker=None):
             cam.punch(t, 0.05, 0.3)
             sfx_ev.append((t, "burst", 0.9))
             by = e.get("by")
+            last = LAST_WORDS[e["a"]]
             if by == "wall":
-                why = "자기장에 깎였어요"
+                why = f"자기장 피하다가. '{last}'"
             elif by is not None:
-                why = {"수": "물에 꺼졌어요", "화": "불에 녹았어요", "금": "쇠에 베였어요", "목": "나무뿌리에 파였어요",
-                       "토": "흙에 막혔어요"}[STEMS[by][2]]
-                why = f"{STEMS[by][0]}한테 " + why
+                why = f"{STEMS[by][0]}한테 맞고. '{last}'"
             else:
-                why = ""
-            pops.append((t, t + 1.5, f"{name} 탈락  {e['rank']}위\n{why}", "#FF4B3E", 76))
+                why = f"'{last}'"
+            pops.append((t, t + 1.7, f"{name} 탈락  {e['rank']}위\n{why}", "#FF4B3E", 76))
         elif k == "final2":
             a, b = e["a"]
             na, nb = STEMS[a][0], STEMS[b][0]
@@ -510,14 +511,18 @@ def render(seed, ep, out, tmp, title_kicker=None):
                 f_ = fx.font("black", sz)
                 head, _, tail = s.partition("\n")
                 lines = fx.wrap(head, f_, 940)
-                f2_ = fx.font("black", int(sz * 0.62))
+                f2_ = fx.font("black", int(sz * 0.55))
+                while tail and f2_.measureText(tail) > 960 and f2_.getSize() > 30:
+                    f2_ = fx.font("black", f2_.getSize() - 2)
                 bw = max([f_.measureText(ln) for ln in lines] + ([f2_.measureText(tail)] if tail else [])) + 70
                 bh = len(lines) * sz * 1.15 + (sz * 0.62 * 1.2 if tail else 0) + 34
                 fx.rrect(c, -bw / 2, -sz * 0.95 - 10, bw, bh, 26, "#05080A", 0.62 * a_)
                 for li, ln in enumerate(lines):
                     fx.text(c, ln, 0, li * sz * 1.15, f_, cc, a_, stroke=12)
                 if tail:
-                    f2_ = fx.font("black", int(sz * 0.62))
+                    f2_ = fx.font("black", int(sz * 0.55))
+                    while f2_.measureText(tail) > 960 and f2_.getSize() > 30:
+                        f2_ = fx.font("black", f2_.getSize() - 2)
                     fx.text(c, tail, 0, len(lines) * sz * 1.15 - sz * 0.2, f2_, "#FFFFFF", a_, stroke=10)
                 c.restore()
         # 끝 화면

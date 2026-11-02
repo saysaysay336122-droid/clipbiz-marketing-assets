@@ -73,7 +73,7 @@ def overlay_html(t, sc, end=False):
     .title{{font-size:{'84' if end else '74'}px;line-height:1.3;font-weight:700;letter-spacing:-1px;word-break:keep-all;text-shadow:0 2px 14px rgba(0,0,0,.35)}}
     .body{{margin-top:30px;font-size:40px;line-height:1.5;color:{t['sub']};font-family:'Noto Sans CJK KR';font-weight:400;word-break:keep-all}}
     .foot{{margin-top:56px;font-size:40px;color:{t['fg']};font-family:'Noto Sans CJK KR';font-weight:700}}
-    .credit{{position:absolute;left:110px;bottom:150px;font-size:26px;color:{t['sub']};font-family:'Noto Sans CJK KR'}}
+    .credit{{position:absolute;left:110px;bottom:150px;font-size:17px;opacity:.4;color:{t['sub']};font-family:'Noto Sans CJK KR'}}
     </style></head><body>{band}<div class='box'>{kicker}<div class='title'>{esc(sc.get('title'))}</div>{body}{foot}</div>{credit}</body></html>"""
 
 

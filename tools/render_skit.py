@@ -19,7 +19,7 @@ search spec: badge(화면 위 작은 빨간 표시, 반전의 단서), clock, hi
 tier spec  : title, tiers(["S","A","B","C","F"]), items[{img|draw, label, say, tier}], twist{tier, img, label, reveal, say}
 
 원칙: 반전의 단서는 첫 화면부터 보이게 둔다(search의 badge, tier의 hook). 음악은 반전 0.45초 전에 끊고 효과음으로 친다.
-등장인물은 가상 인물이라는 문구를 화면 아래에 작게 계속 둔다.
+등장인물은 가상 인물이라는 문구를 화면 아래에 17px로 흐리게 계속 둔다(2026-11-02 대표 지시: 아주 작게).
 """
 import base64
 import html
@@ -72,7 +72,7 @@ body{{width:{W}px;height:{H}px;font-family:{FONT};position:relative;overflow:hid
 .icons{{display:flex;gap:14px;align-items:center}}
 .bars{{display:flex;gap:4px;align-items:flex-end;height:26px}}.bars i{{display:block;width:7px;background:currentColor;border-radius:2px}}
 .batt{{width:52px;height:26px;border:3px solid currentColor;border-radius:7px;position:relative;padding:3px}}.batt i{{display:block;height:100%;width:62%;background:currentColor;border-radius:2px}}
-.fic{{position:absolute;left:0;right:0;bottom:250px;text-align:center;font-size:24px;opacity:.55}}
+.fic{{position:absolute;left:0;right:0;bottom:250px;text-align:center;font-size:17px;opacity:.35}}
 .hook{{position:absolute;left:60px;right:150px;top:1060px;text-align:center;z-index:40}}
 .hook span{{display:inline;background:#111;color:#FFF;font-size:64px;font-weight:900;line-height:1.5;padding:4px 22px;border-radius:14px;letter-spacing:-1.2px;
   -webkit-box-decoration-break:clone;box-decoration-break:clone}}

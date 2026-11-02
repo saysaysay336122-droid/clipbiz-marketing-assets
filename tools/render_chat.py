@@ -28,7 +28,7 @@ spec.json 예
 'note'가 나오면 다음 bg 영상으로 넘어가며 1.5초 동안 선명한 화면에 그 문장을 크게 보여 준다(장면 전환). 끝 화면은 흐린 영상 위에 글.
 
 규칙
-1. 등장인물은 모두 가상 인물이다. 화면 위에 '등장인물은 가상 인물입니다'를 작게 넣는다(지우지 않는다).
+1. 등장인물은 모두 가상 인물이다. 화면에 '등장인물은 가상 인물입니다'를 17px, 흐리게 넣는다(지우지 않는다. 2026-11-02 대표 지시: 보는 사람이 작업물 느낌을 받지 않게 아주 작게).
 2. 메시지는 한 말풍선에 30자 안. 길면 두 개로 나눈다.
 3. 영상에서 말풍선은 화면 높이 15~70% 구간에만 둔다(아래 576px은 릴스와 쇼츠의 계정 이름, 캡션 자리). 오른쪽 150px도 비운다.
    말풍선 글씨는 영상 63px, 카드 42px(2026-11-02 대표 승인: 휴대폰에서 읽히게 1.5배).
@@ -119,7 +119,7 @@ def chat_html(t, spec, msgs, typing_from=None, w=1080, h=1920, card=False, video
     .head{{position:absolute;left:0;right:0;top:0;height:{200 if card else 250}px;background:{head};color:{t['headfg'] if not video else '#FFFFFF'};
       display:flex;flex-direction:column;justify-content:flex-end;padding:0 72px 28px;z-index:20}}
     .room{{font-size:44px;font-weight:700;letter-spacing:-0.5px}}
-    .fic{{font-size:24px;opacity:.6;margin-top:6px}}
+    .fic{{font-size:17px;opacity:.38;margin-top:4px}}
     .when{{position:absolute;left:0;right:0;top:{230 if card else 290}px;text-align:center;font-size:32px;color:{sub};font-weight:500;{shadow}}}
     .area{{position:absolute;left:56px;right:{right}px;top:{300 if card else 370}px;bottom:{bottom}px;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;overflow:hidden}}
     .row{{display:flex;max-width:{84 if card else 90}%}}
@@ -152,7 +152,7 @@ def end_html(t, e):
     .title{{font-size:80px;line-height:1.3;font-weight:700;letter-spacing:-1px;word-break:keep-all}}
     .body{{margin-top:34px;font-size:40px;line-height:1.5;color:{t['endsub']}}}
     .foot{{margin-top:56px;font-size:42px;font-weight:700;color:{t['accent']}}}
-    .fic{{position:absolute;left:110px;bottom:150px;font-size:26px;color:{t['endsub']}}}
+    .fic{{position:absolute;left:110px;bottom:150px;font-size:17px;opacity:.4;color:{t['endsub']}}}
     </style></head><body><div class='title'>{esc(e.get('title'))}</div>{body}{foot}
     <div class='fic'>등장인물은 가상 인물입니다</div></body></html>"""
 
@@ -167,7 +167,7 @@ def caption_html(t, kicker, title):
     .box{{position:absolute;left:96px;right:160px;bottom:380px;color:#FFFFFF}}
     .k{{font-size:34px;font-weight:500;color:rgba(255,255,255,.82);margin-bottom:18px;letter-spacing:0.5px}}
     .t{{font-size:80px;line-height:1.28;font-weight:700;letter-spacing:-1px;word-break:keep-all;text-shadow:0 2px 14px rgba(0,0,0,.45)}}
-    .fic{{position:absolute;right:160px;top:120px;font-size:24px;color:#FFFFFF;background:rgba(0,0,0,.38);padding:6px 16px;border-radius:999px}}
+    .fic{{position:absolute;right:160px;top:120px;font-size:17px;color:#FFFFFF;opacity:.45}}
     </style></head><body><div class='band'></div><div class='fic'>등장인물은 가상 인물입니다</div>
     <div class='box'>{k}<div class='t'>{esc(title)}</div></div></body></html>"""
 
@@ -182,7 +182,7 @@ def end_video_html(t, e):
     .title{{font-size:80px;line-height:1.3;font-weight:700;letter-spacing:-1px;word-break:keep-all}}
     .body{{margin-top:34px;font-size:40px;line-height:1.5;color:#E3E8EE}}
     .foot{{margin-top:56px;font-size:42px;font-weight:700;color:{t['accent']}}}
-    .fic{{position:absolute;left:110px;bottom:150px;font-size:26px;color:#E3E8EE}}
+    .fic{{position:absolute;left:110px;bottom:150px;font-size:17px;opacity:.4;color:#E3E8EE}}
     </style></head><body><div class='title'>{esc(e.get('title'))}</div>{body}{foot}
     <div class='fic'>등장인물은 가상 인물입니다</div></body></html>"""
 

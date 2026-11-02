@@ -108,7 +108,7 @@ def sf_render(notes, sec):
             cur = pos
         if on:
             if ch == 9:
-                s.program_select(9, sfid, 128, prog)
+                s.program_select(9, sfid, 128, 0)
             else:
                 s.program_select(ch, sfid, 0, prog)
             s.noteon(ch, int(note), int(vel))
@@ -497,3 +497,139 @@ def bed(sec, parts):
             rms = float(np.sqrt(np.mean((stems["drums"] + stems["bass"] + stems["mel"]) ** 2))) or 1.0
             out[key][s:e] += seg * fade * g * (0.16 / rms)
     return out
+
+
+# ---------------------------------------------------------------- 예고편, 다큐, 라디오용
+def sfx_braam(rng, sec=2.6, root=36):
+    """예고편 '브와암'. 톱니파 여러 겹을 찌그러뜨리고 길게 끈다(자체 합성)."""
+    t = t_(sec)
+    out = np.zeros(len(t))
+    for k, (m, a) in enumerate(((root, 1.0), (root + 12, 0.6), (root + 7, 0.45), (root - 12, 0.7))):
+        f = hz(m) * (1 + 0.004 * np.sin(2 * math.pi * (0.7 + k * 0.3) * t)) * (1 - 0.03 * t / sec)
+        ph = np.cumsum(f) / SR
+        saw = 2 * (ph % 1.0) - 1
+        out += saw * a
+    out = lp(out, 900, order=2)
+    out = sat(out * 0.6, 3.0)
+    e = np.minimum(1, t / 0.04) * np.exp(-t * 0.9)
+    noise = lp(rng.standard_normal(len(t)), 300) * np.exp(-t * 6) * 0.4
+    return (out * e + noise) * 0.55
+
+
+def sfx_fart(rng, sec=0.9):
+    t = t_(sec)
+    f = 75 + 25 * np.sin(2 * math.pi * 3 * t) + 10 * rng.standard_normal(len(t)).cumsum() / SR * 30
+    buzz = np.sign(np.sin(2 * math.pi * np.cumsum(f) / SR))
+    am = 0.6 + 0.4 * np.sin(2 * math.pi * 23 * t + rng.uniform(0, 6))
+    x = lp(buzz * am, 700) + lp(rng.standard_normal(len(t)), 400) * 0.25
+    return sat(x, 2) * env(len(t), 0.02, 2.5) * 0.6
+
+
+def sfx_sting(rng):
+    """코미디 마무리 '빠밤'(사운드폰트 금관)."""
+    notes = [(0, 0.12, 61, 60, 110, 0), (0, 0.12, 61, 64, 100, 0), (0.18, 0.5, 61, 67, 120, 0), (0.18, 0.5, 61, 72, 110, 0),
+             (0.18, 0.6, 47, 43, 120, 1)]
+    return sf_render(notes, 1.2) * 1.5
+
+
+def sfx_dun(rng):
+    """드라마틱 '두둥'(현악 저음 + 팀파니)."""
+    notes = [(0, 0.35, 48, 38, 127, 0), (0, 0.35, 48, 50, 120, 0), (0.42, 1.2, 48, 37, 127, 0), (0.42, 1.2, 48, 49, 120, 0),
+             (0, 0.3, 47, 38, 127, 1), (0.42, 1.0, 47, 37, 127, 1)]
+    return sf_render(notes, 2.0) * 1.5
+
+
+SFX.update({"braam": sfx_braam, "fart": sfx_fart, "sting": sfx_sting, "dun": sfx_dun})
+
+
+def trailer_music(sec, seed=1, bpm=96, root=38):
+    """예고편 배경: 짧게 끊는 현악 오스티나토, 팀파니, 금관 화음. 점점 커진다."""
+    rng = np.random.default_rng(seed)
+    beat = 60 / bpm
+    notes_s, notes_b, notes_t = [], [], []
+    minor = [0, 3, 7, 10]
+    tt = 0.0
+    bar = 0
+    prog = [0, 0, 8, 5]  # i, i, VI, iv
+    while tt < sec:
+        r = root + prog[bar % 4]
+        inten = min(1.0, tt / max(1, sec * 0.7))
+        for i in range(8):
+            notes_s.append((tt + i * beat / 2, beat * 0.35, 48, r + 12 + (0 if i % 2 == 0 else 7), int(70 + 50 * inten), 0))
+        if bar % 2 == 0 or inten > 0.5:
+            for m in (0, 7, 12):
+                notes_b.append((tt, beat * 3.6, 61, r + m, int(60 + 60 * inten), 1))
+        for i in (0, 2.5, 3):
+            notes_t.append((tt + i * beat, 0.4, 47, r - 12, int(80 + 40 * inten), 2))
+        tt += 4 * beat
+        bar += 1
+    mel = sf_render(notes_s, sec) * 1.3
+    bass = sf_render(notes_b, sec) * 1.0
+    drums = sf_render(notes_t, sec) * 1.4
+    return dict(drums=drums, bass=bass, mel=mel, bpm=bpm)
+
+
+def doc_music(sec, seed=1, bpm=72, root=60):
+    """자연 다큐 배경: 하프 아르페지오, 현악 패드, 플루트 선율. 차분하고 진지하다."""
+    beat = 60 / bpm
+    major = [0, 2, 4, 5, 7, 9, 11]
+    prog = [0, 5, 3, 4]
+    notes_h, notes_p, notes_f = [], [], []
+    tt = 0.0
+    bar = 0
+    rng = np.random.default_rng(seed)
+    while tt < sec:
+        deg = prog[bar % 4]
+        chord = [major[(deg + k) % 7] + 12 * ((deg + k) // 7) for k in (0, 2, 4)]
+        for i in range(8):
+            n = root - 12 + chord[i % 3] + 12 * (i // 3 % 2)
+            notes_h.append((tt + i * beat / 2, beat * 1.5, 46, n, 80, 0))
+        for c in chord:
+            notes_p.append((tt, beat * 4, 49, root - 12 + c, 55, 1))
+        if bar % 2 == 0:
+            for i, k in enumerate(rng.choice([0, 2, 4, 5, 7], 3)):
+                notes_f.append((tt + i * beat * 1.3, beat * 1.2, 73, root + 12 + major[k % 7], 70, 2))
+        tt += 4 * beat
+        bar += 1
+    return dict(mel=sf_render(notes_h, sec) * 1.2, bass=sf_render(notes_p, sec) * 1.1, drums=sf_render(notes_f, sec) * 0.9,
+                bpm=bpm)
+
+
+def radio_music(sec, seed=1, bpm=84, root=57):
+    """심야 라디오 배경: 일렉트릭 피아노 화음과 가벼운 베이스, 브러시 느낌의 하이햇."""
+    beat = 60 / bpm
+    prog = [[0, 4, 7, 11], [5, 9, 12, 16], [2, 5, 9, 12], [7, 11, 14, 17]]
+    notes_k, notes_b, notes_d = [], [], []
+    tt = 0.0
+    bar = 0
+    while tt < sec:
+        ch = prog[bar % 4]
+        for i in (0, 1.5, 2.5):
+            for c in ch:
+                notes_k.append((tt + i * beat, beat * 0.9, 4, root + c, 60, 0))
+        notes_b.append((tt, beat * 1.8, 33, root - 24 + ch[0], 90, 1))
+        notes_b.append((tt + 2 * beat, beat * 1.8, 33, root - 24 + ch[0] + 7, 85, 1))
+        for i in range(8):
+            notes_d.append((tt + i * beat / 2, 0.05, 42, 42, 40 if i % 2 else 60, 9))
+        tt += 4 * beat
+        bar += 1
+    return dict(mel=sf_render(notes_k, sec) * 1.0, bass=sf_render(notes_b, sec) * 1.2, drums=sf_render(notes_d, sec) * 0.8,
+                bpm=bpm)
+
+
+def sfx_gurgle(rng, sec=1.1):
+    """배에서 꾸르륵(저음 거품 소리 여러 개)."""
+    out = np.zeros(int(sec * SR))
+    tt = 0.0
+    while tt < sec - 0.15:
+        ln = rng.uniform(0.06, 0.16)
+        t = t_(ln)
+        f0 = rng.uniform(90, 220)
+        f = f0 * (1 + 0.8 * t / ln) if rng.random() < 0.5 else f0 * (1.6 - 0.6 * t / ln)
+        b = np.sin(2 * math.pi * np.cumsum(f) / SR) * np.sin(np.pi * t / ln) ** 2
+        add(out, tt, lp(b, 600), rng.uniform(0.4, 0.8))
+        tt += ln * rng.uniform(0.5, 1.1)
+    return out * 0.8
+
+
+SFX.update({"gurgle": sfx_gurgle})

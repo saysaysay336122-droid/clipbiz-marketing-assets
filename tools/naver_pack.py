@@ -112,7 +112,7 @@ def body_html(post, imgs):
         elif "img" in b:
             data = imgs[k]
             k += 1
-            parts.append(f"<p style='text-align:center'><img src='data:image/jpeg;base64,{data}' alt='{html.escape(b['alt'])}' width='720'></p>")
+            parts.append(f"<p class='imgp' style='text-align:center'><img src='data:image/jpeg;base64,{data}' alt='{html.escape(b['alt'])}' width='720'><br><button class='imgbtn' onclick=\"copyImg(this,'{post['_bid']}',{k - 1})\">사진 {k} 복사</button></p>")
             if b.get("cap"):
                 parts.append(f"<p style='text-align:center'><span style='color:#777;font-size:13px'>{inline(b['cap'])}</span></p>")
     if post.get("tags"):
@@ -151,7 +151,7 @@ button{font:inherit;font-size:14px;padding:9px 14px;border-radius:8px;border:1px
 button.o{background:transparent;color:var(--ink);border-color:var(--line)}button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}button.ok{background:#2F7D4F;border-color:#2F7D4F}
 .ttl{padding:12px 16px 0;font-size:19px;font-weight:700}
 .post{padding:8px 16px 18px;background:var(--paper);color:var(--paperink);font-size:16px;min-width:0;overflow-x:auto}
-.post img{max-width:100%;height:auto}.post table{font-size:14px}.post a{color:#1a5fb4}
+.post img{max-width:100%;height:auto}.imgbtn{margin-top:6px;font-size:13px;padding:6px 12px}.post table{font-size:14px}.post a{color:#1a5fb4}
 .tags{padding:10px 16px 14px;color:var(--sub);font-size:13px;border-top:1px solid var(--line)}
 .dl{font-size:12px;color:var(--sub);padding:0 16px 14px;display:flex;flex-wrap:wrap;gap:6px 4px;align-items:center}.dl a{color:var(--sub);margin-right:12px;font-size:12px}button.s{font-size:12px;padding:5px 9px}
 """
@@ -160,9 +160,9 @@ PAGE_JS = """
 function sel(el){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);return s}
 function flash(b,t){const o=b.dataset.l||b.textContent;b.dataset.l=o;b.textContent=t;b.classList.add('ok');setTimeout(()=>{b.textContent=o;b.classList.remove('ok')},1800)}
 async function copyText(b,txt){try{await navigator.clipboard.writeText(txt);flash(b,'복사됨')}catch(e){const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();flash(b,'복사됨')}}
-async function copyBody(b,id){const el=document.getElementById(id);let ok=false;try{sel(el);ok=document.execCommand('copy');getSelection().removeAllRanges()}catch(e){}
+async function copyBody(b,id){const src=document.getElementById(id);const el=src.cloneNode(true);el.removeAttribute('id');el.querySelectorAll('.imgp').forEach(x=>x.remove());el.style.position='fixed';el.style.left='-9999px';document.body.appendChild(el);let ok=false;try{sel(el);ok=document.execCommand('copy');getSelection().removeAllRanges()}catch(e){}el.remove();
  if(!ok){try{await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([el.innerHTML],{type:'text/html'}),'text/plain':new Blob([el.innerText],{type:'text/plain'})})]);ok=true}catch(e){}}
- if(ok){flash(b,'본문 복사됨');mark(id)}else{sel(el);flash(b,'선택됨, Ctrl+C')}}
+ if(ok){flash(b,'본문 복사됨');mark(id)}else{sel(src);flash(b,'선택됨, Ctrl+C')}}
 async function copyImg(b,id,i){const im=document.querySelectorAll('#'+id+' img')[i];try{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext('2d').drawImage(im,0,0);const blob=await new Promise(r=>c.toBlob(r,'image/png'));await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);flash(b,'사진 복사됨')}catch(e){flash(b,'복사가 막혔어요. html 파일로 열어 주세요')}}
 function mark(id){try{const d=JSON.parse(localStorage.getItem('nb_done')||'{}');d[id]=1;localStorage.setItem('nb_done',JSON.stringify(d))}catch(e){}paint()}
 function paint(){let d={};try{d=JSON.parse(localStorage.getItem('nb_done')||'{}')}catch(e){}document.querySelectorAll('.nav a').forEach(a=>{a.classList.toggle('done',!!d[a.dataset.id])})}
@@ -194,9 +194,10 @@ def main():
         files = rendered.get(post["id"], [])
         imgs = [base64.b64encode(f.read_bytes()).decode() for f in files]
         bid = f"b{i}"
+        post['_bid'] = bid
         tags = " ".join(post["tags"])
         nav.append(f"<a href='#s{i}' data-id='{bid}'>{i}. {html.escape(post['when'].split('(')[0].replace('2026년 ', '').replace('2027년 ', ''))}</a>")
-        dls = "<span>사진이 빠졌을 때</span>" + "".join(f"<button class='o s' onclick=\"copyImg(this,'{bid}',{j - 1})\">사진 {j} 복사</button>" for j in range(1, len(imgs) + 1))
+        dls = "<span>사진만 따로</span>" + "".join(f"<button class='o s' onclick=\"copyImg(this,'{bid}',{j - 1})\">사진 {j} 복사</button>" for j in range(1, len(imgs) + 1))
         secs.append(f"""<section id='s{i}'><div class='box'>
 <div class='meta'><span class='n'>{i}</span><span class='w'>예약 {html.escape(post['when'])}</span><span class='c'>카테고리 {html.escape(post['category'])}</span></div>
 <div class='btns'><button onclick="copyText(this,{html.escape(json.dumps(post['title'], ensure_ascii=False))})">제목 복사</button>
@@ -211,10 +212,11 @@ def main():
 <div class='how'><b>한 편 붙여 넣는 순서</b><ol>
 <li>네이버 블로그 글쓰기를 엽니다.</li>
 <li>제목 복사를 누르고 제목 칸에 붙여 넣습니다.</li>
-<li>본문 복사를 누르고 본문 첫 줄에 붙여 넣습니다. 사진과 표, 맨 끝 #태그까지 같이 들어갑니다. 본문의 #태그는 네이버가 태그로 자동 등록합니다.</li>
+<li>본문 복사를 누르고 본문 첫 줄에 붙여 넣습니다. 글, 표, 링크, 맨 끝 #태그가 들어갑니다. 본문의 #태그는 네이버가 태그로 자동 등록합니다.</li>
+<li>사진은 네이버가 붙여넣기로 받지 않아 따로 넣습니다. 이 페이지에서 사진 1 복사를 누르고, 네이버 본문의 회색 사진 설명 줄 바로 위 빈 줄에 붙여 넣습니다. 사진 2부터 4까지 같은 방법입니다.</li>
 <li>발행 창에서 카테고리를 고르고 태그 칸에 태그가 들어왔는지 봅니다.</li>
 <li>발행 시간을 예약으로 바꿔 위에 적힌 날짜와 시각을 넣고 발행합니다.</li></ol>
-첫 글을 붙여 넣은 뒤 사진이 들어왔는지 봐 주세요. 사진이 빠졌다면 글 아래 사진 1 복사를 누르고, 본문의 사진 설명 줄 바로 위에 붙여 넣으면 됩니다. 사진 설명 줄이 사진 자리입니다. 이 화면에서 복사 버튼이 막히면 함께 받은 html 파일을 크롬으로 열어 같은 버튼을 쓰면 됩니다.</div>
+사진 복사 버튼은 페이지 미리보기의 각 사진 바로 아래와 글 맨 아래에 있습니다. 이 화면에서 복사 버튼이 막히면 함께 받은 html 파일을 크롬으로 열어 같은 버튼을 쓰면 됩니다.</div>
 <div class='nav'>{''.join(nav)}</div></div>
 {''.join(secs)}<script>{PAGE_JS}</script>"""
     (out / "네이버원고.html").write_text(page, encoding="utf-8")

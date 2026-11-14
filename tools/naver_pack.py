@@ -20,7 +20,9 @@
   rows    {"kicker", "title", "rows": [[왼쪽, 오른쪽], ...]}   두 칸 표 카드
   steps   {"kicker", "title", "steps": ["...", ...]}  번호 순서 카드
   formula {"kicker", "title", "lines": ["식", ...], "note": "설명"}  산식 카드
-이미지는 1080x1080 JPEG로 만들고 페이지 안에 data URI로 넣는다. 붙여 넣으면 네이버 서버로 함께 올라간다.
+이미지는 1080x1080 JPEG. 미리보기에는 data URI로 넣고, spec에 img_base(공개 https 주소)가 있으면 본문 복사 때 그 주소의 사진을 함께 담는다.
+네이버가 붙여넣기 HTML의 data URI 사진은 받지 않는다(2026-11-04 확인). https 사진이 들어오지 않으면 사진 n 복사 버튼으로 붙인다.
+글마다 theme(b2b 기본, hic 하이클립)를 줄 수 있다. cover에는 big(큰 숫자나 날짜 한 줄)을 줄 수 있다.
 글자는 직접 만든 카드뿐이다. 로고, 주소 워터마크, 사진 소재를 쓰지 않는다.
 """
 import base64
@@ -39,31 +41,51 @@ def esc(s):
     return html.escape(s or "").replace("\n", "<br>")
 
 
-def card_html(c):
+THEMES = {
+    # b2b: 클립비즈 계정 남색, hic: 하이클립 화면색(밝은 바탕)
+    "b2b": dict(cbg=NAVY, cfg="#FFFFFF", csub="#C9D6E3", acc=ORANGE, bg=PAPER, ink=INK, sub=SUB, line="#CFCAC0", dot=NAVY),
+    "hic": dict(cbg="#F5F6F3", cfg="#14202E", csub="#485868", acc="#C64016", bg="#FFFFFF", ink="#14202E", sub="#485868", line="#D9DDD6", dot="#14202E"),
+}
+
+
+def _title_px(title, big):
+    longest = max(len(x) for x in title.split("\n"))
+    if big:
+        return 96 if longest <= 10 else 84 if longest <= 12 else 74
+    return 128 if longest <= 7 else 112 if longest <= 9 else 98 if longest <= 11 else 86
+
+
+def card_html(c, theme="b2b"):
+    t = THEMES.get(theme, THEMES["b2b"])
     kind = c.get("kind", "cover")
     base = f"""*{{margin:0;padding:0;box-sizing:border-box}}
     body{{width:1080px;height:1080px;font-family:{FONT};word-break:keep-all;overflow:hidden;position:relative}}
-    .k{{font-size:34px;font-weight:500;letter-spacing:1px}}
-    .bar{{width:64px;height:8px;background:{ORANGE};margin:30px 0 40px}}"""
+    .k{{font-size:40px;font-weight:500;letter-spacing:1px}}
+    .bar{{width:72px;height:10px;background:{t['acc']};margin:30px 0 40px}}
+    .brand{{position:absolute;left:96px;bottom:70px;font-size:30px;font-weight:500;letter-spacing:1px}}"""
     if kind == "cover":
+        big = c.get("big", "")
+        bightml = f"<div class='big'>{esc(big)}</div>" if big else ""
         return f"""<html><head><meta charset='utf-8'><style>{base}
-        body{{background:{NAVY};color:#fff}}
-        .w{{position:absolute;left:100px;right:100px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center}}
-        .k{{color:#C9D6E3}} .t{{font-size:84px;line-height:1.3;font-weight:700;letter-spacing:-1.5px}}
+        body{{background:{t['cbg']};color:{t['cfg']}}}
+        .w{{position:absolute;left:96px;right:80px;top:70px;bottom:150px;display:flex;flex-direction:column;justify-content:center}}
+        .k,.brand{{color:{t['csub']}}}
+        .big{{font-size:200px;line-height:1;font-weight:800;letter-spacing:-6px;color:{t['acc']};margin:-6px 0 34px}}
+        .t{{font-size:{_title_px(c['title'], big)}px;line-height:1.2;font-weight:800;letter-spacing:-3px}}
         </style></head><body><div class='w'><div class='k'>{esc(c.get('kicker'))}</div><div class='bar'></div>
-        <div class='t'>{esc(c['title'])}</div></div></body></html>"""
+        {bightml}<div class='t'>{esc(c['title'])}</div></div><div class='brand'>클립비즈 실무 노트</div></body></html>"""
     head = f"<div class='k'>{esc(c.get('kicker'))}</div><div class='bar'></div><div class='t'>{esc(c['title'])}</div>"
     css = f"""{base}
-    body{{background:{PAPER};color:{INK}}}
-    .w{{position:absolute;left:90px;right:90px;top:80px;bottom:80px;display:flex;flex-direction:column;justify-content:center}}
-    .k{{color:{SUB}}} .t{{font-size:60px;line-height:1.28;font-weight:700;letter-spacing:-1px;margin-bottom:46px}}
-    .rows{{border-top:3px solid {INK}}}
-    .r{{display:flex;justify-content:space-between;align-items:baseline;gap:30px;padding:24px 4px;border-bottom:1.5px solid #CFCAC0;font-size:38px}}
-    .r span:first-child{{color:{SUB};flex:0 0 44%}} .r span:last-child{{font-weight:700;text-align:right}}
-    .s{{display:flex;gap:28px;align-items:flex-start;margin-bottom:30px;font-size:40px;line-height:1.42}}
-    .n{{flex:0 0 64px;height:64px;border-radius:50%;background:{NAVY};color:#fff;font-size:34px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:-2px}}
-    .f{{background:#fff;border-left:10px solid {ORANGE};padding:34px 38px;font-size:42px;line-height:1.55;font-weight:700;margin-bottom:34px}}
-    .note{{font-size:34px;line-height:1.55;color:{SUB}}}"""
+    body{{background:{t['bg']};color:{t['ink']}}}
+    .w{{position:absolute;left:90px;right:90px;top:70px;bottom:130px;display:flex;flex-direction:column;justify-content:center}}
+    .k,.brand{{color:{t['sub']}}} .t{{font-size:66px;line-height:1.24;font-weight:800;letter-spacing:-1.5px;margin-bottom:46px}}
+    .rows{{border-top:4px solid {t['ink']}}}
+    .r{{display:flex;justify-content:space-between;align-items:baseline;gap:30px;padding:24px 4px;border-bottom:1.5px solid {t['line']};font-size:40px}}
+    .r span:first-child{{color:{t['sub']};flex:0 0 46%}} .r span:last-child{{font-weight:700;text-align:right}}
+    .s{{display:flex;gap:28px;align-items:flex-start;margin-bottom:30px;font-size:42px;line-height:1.4}}
+    .n{{flex:0 0 66px;height:66px;border-radius:50%;background:{t['dot']};color:#fff;font-size:34px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:-2px}}
+    .f{{background:{'#fff' if theme == 'b2b' else '#F5F6F3'};border-left:12px solid {t['acc']};padding:34px 38px;font-size:44px;line-height:1.55;font-weight:700;margin-bottom:34px}}
+    .note{{font-size:36px;line-height:1.5;color:{t['sub']}}}"""
     if kind == "rows":
         inner = "<div class='rows'>" + "".join(
             f"<div class='r'><span>{esc(a)}</span><span>{esc(b)}</span></div>" for a, b in c["rows"]) + "</div>"
@@ -76,7 +98,7 @@ def card_html(c):
             inner += f"<div class='note'>{esc(c['note'])}</div>"
     else:
         raise ValueError(kind)
-    return f"<html><head><meta charset='utf-8'><style>{css}</style></head><body><div class='w'>{head}{inner}</div></body></html>"
+    return f"<html><head><meta charset='utf-8'><style>{css}</style></head><body><div class='w'>{head}{inner}</div><div class='brand'>클립비즈 실무 노트</div></body></html>"
 
 
 INLINE = re.compile(r"\*\*(.+?)\*\*|\[(.+?)\]\((https?://[^)\s]+)\)")
@@ -112,7 +134,8 @@ def body_html(post, imgs):
         elif "img" in b:
             data = imgs[k]
             k += 1
-            parts.append(f"<p class='imgp' style='text-align:center'><img src='data:image/jpeg;base64,{data}' alt='{html.escape(b['alt'])}' width='720'><br><button class='imgbtn' onclick=\"copyImg(this,'{post['_bid']}',{k - 1})\">사진 {k} 복사</button></p>")
+            remote = f" data-src='{html.escape(post['_img_base'])}{post['id']}_{k}.jpg'" if post.get('_img_base') else ''
+            parts.append(f"<p class='imgp' style='text-align:center'><img src='data:image/jpeg;base64,{data}'{remote} alt='{html.escape(b['alt'])}' width='720'><br><button class='imgbtn' onclick=\"copyImg(this,'{post['_bid']}',{k - 1})\">사진 {k} 복사</button></p>")
             if b.get("cap"):
                 parts.append(f"<p style='text-align:center'><span style='color:#777;font-size:13px'>{inline(b['cap'])}</span></p>")
     if post.get("tags"):
@@ -160,7 +183,7 @@ PAGE_JS = """
 function sel(el){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);return s}
 function flash(b,t){const o=b.dataset.l||b.textContent;b.dataset.l=o;b.textContent=t;b.classList.add('ok');setTimeout(()=>{b.textContent=o;b.classList.remove('ok')},1800)}
 async function copyText(b,txt){try{await navigator.clipboard.writeText(txt);flash(b,'복사됨')}catch(e){const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();flash(b,'복사됨')}}
-async function copyBody(b,id){const src=document.getElementById(id);const el=src.cloneNode(true);el.removeAttribute('id');el.querySelectorAll('.imgp').forEach(x=>x.remove());el.style.position='fixed';el.style.left='-9999px';document.body.appendChild(el);let ok=false;try{sel(el);ok=document.execCommand('copy');getSelection().removeAllRanges()}catch(e){}el.remove();
+async function copyBody(b,id){const src=document.getElementById(id);const el=src.cloneNode(true);el.removeAttribute('id');el.querySelectorAll('.imgp').forEach(x=>{const im=x.querySelector('img');const u=im&&im.dataset.src;if(u){const q=document.createElement('p');q.style.textAlign='center';const n=document.createElement('img');n.src=u;n.alt=im.alt;n.width=720;q.appendChild(n);x.replaceWith(q)}else{x.remove()}});el.style.position='fixed';el.style.left='-9999px';document.body.appendChild(el);let ok=false;try{sel(el);ok=document.execCommand('copy');getSelection().removeAllRanges()}catch(e){}el.remove();
  if(!ok){try{await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([el.innerHTML],{type:'text/html'}),'text/plain':new Blob([el.innerText],{type:'text/plain'})})]);ok=true}catch(e){}}
  if(ok){flash(b,'본문 복사됨');mark(id)}else{sel(src);flash(b,'선택됨, Ctrl+C')}}
 async function copyImg(b,id,i){const im=document.querySelectorAll('#'+id+' img')[i];try{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext('2d').drawImage(im,0,0);const blob=await new Promise(r=>c.toBlob(r,'image/png'));await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);flash(b,'사진 복사됨')}catch(e){flash(b,'복사가 막혔어요. html 파일로 열어 주세요')}}
@@ -183,7 +206,7 @@ def main():
             for b in post["blocks"]:
                 if "img" in b:
                     k += 1
-                    pg.set_content(card_html(b["img"]))
+                    pg.set_content(card_html(b["img"], post.get("theme", "b2b")))
                     pg.wait_for_timeout(120)
                     f = out / "img" / f"{post['id']}_{k}.jpg"
                     pg.screenshot(path=str(f), type="jpeg", quality=86)
@@ -195,13 +218,14 @@ def main():
         imgs = [base64.b64encode(f.read_bytes()).decode() for f in files]
         bid = f"b{i}"
         post['_bid'] = bid
+        post['_img_base'] = spec.get('img_base', '')
         tags = " ".join(post["tags"])
         nav.append(f"<a href='#s{i}' data-id='{bid}'>{i}. {html.escape(post['when'].split('(')[0].replace('2026년 ', '').replace('2027년 ', ''))}</a>")
         dls = "<span>사진만 따로</span>" + "".join(f"<button class='o s' onclick=\"copyImg(this,'{bid}',{j - 1})\">사진 {j} 복사</button>" for j in range(1, len(imgs) + 1))
         secs.append(f"""<section id='s{i}'><div class='box'>
 <div class='meta'><span class='n'>{i}</span><span class='w'>예약 {html.escape(post['when'])}</span><span class='c'>카테고리 {html.escape(post['category'])}</span></div>
 <div class='btns'><button onclick="copyText(this,{html.escape(json.dumps(post['title'], ensure_ascii=False))})">제목 복사</button>
-<button onclick="copyBody(this,'{bid}')">본문 복사(이미지 포함)</button>
+<button onclick="copyBody(this,'{bid}')">본문 복사</button>
 <button class='o' onclick="copyText(this,{html.escape(json.dumps(' '.join('#' + t for t in post['tags']), ensure_ascii=False))})">태그만 복사</button></div>
 <div class='ttl'>{html.escape(post['title'])}</div>
 <div class='post' id='{bid}'>{body_html(post, imgs)}</div>
@@ -213,7 +237,7 @@ def main():
 <li>네이버 블로그 글쓰기를 엽니다.</li>
 <li>제목 복사를 누르고 제목 칸에 붙여 넣습니다.</li>
 <li>본문 복사를 누르고 본문 첫 줄에 붙여 넣습니다. 글, 표, 링크, 맨 끝 #태그가 들어갑니다. 본문의 #태그는 네이버가 태그로 자동 등록합니다.</li>
-<li>사진은 네이버가 붙여넣기로 받지 않아 따로 넣습니다. 이 페이지에서 사진 1 복사를 누르고, 네이버 본문의 회색 사진 설명 줄 바로 위 빈 줄에 붙여 넣습니다. 사진 2부터 4까지 같은 방법입니다.</li>
+<li>사진이 본문과 함께 들어왔으면 그대로 둡니다. 들어오지 않았으면 이 페이지에서 사진 1 복사를 누르고, 네이버 본문의 회색 사진 설명 줄 바로 위 빈 줄에 붙여 넣습니다. 사진 2부터 4까지 같은 방법입니다.</li>
 <li>발행 창에서 카테고리를 고르고 태그 칸에 태그가 들어왔는지 봅니다.</li>
 <li>발행 시간을 예약으로 바꿔 위에 적힌 날짜와 시각을 넣고 발행합니다.</li></ol>
 사진 복사 버튼은 페이지 미리보기의 각 사진 바로 아래와 글 맨 아래에 있습니다. 이 화면에서 복사 버튼이 막히면 함께 받은 html 파일을 크롬으로 열어 같은 버튼을 쓰면 됩니다.</div>

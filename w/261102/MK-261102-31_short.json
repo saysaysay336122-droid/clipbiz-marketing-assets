@@ -1,0 +1,30 @@
+{
+ "theme": "hcs",
+ "credit": "영상 Pexels",
+ "music": true,
+ "scenes": [
+  {
+   "src": "stock/pexels_7707974.mp4",
+   "start": 1,
+   "dur": 5.0,
+   "kicker": "연말 모임",
+   "title": "사주 한 판\n어때요",
+   "body": "단톡방에 링크 하나면 돼요"
+  },
+  {
+   "src": "stock/pexels_6396170.mp4",
+   "start": 2,
+   "dur": 5.0,
+   "kicker": "우리 모임 한 판",
+   "title": "각자 일주만\n올려요",
+   "body": "생년월일은 올라가지 않아요"
+  },
+  {
+   "end": true,
+   "dur": 3.8,
+   "title": "모임의 오행 지도와\n짝별 한 줄",
+   "body": "우리 모임 한 판에서 만들어요",
+   "foot": "hongchaksa.kr"
+  }
+ ]
+}

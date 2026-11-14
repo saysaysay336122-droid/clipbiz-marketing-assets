@@ -1,0 +1,37 @@
+{
+ "theme": "hcs",
+ "credit": "영상 Pexels",
+ "music": true,
+ "scenes": [
+  {
+   "src": "stock/pexels_5848357.mp4",
+   "start": 1,
+   "dur": 4.4,
+   "kicker": "사주 기초",
+   "title": "오행이 서로\n누르는 순서",
+   "body": "상극, 다섯 기운의 차례"
+  },
+  {
+   "src": "stock/pexels_6911647.mp4",
+   "start": 0.5,
+   "dur": 4.2,
+   "kicker": "목극토, 토극수",
+   "title": "나무는 흙을,\n흙은 물을"
+  },
+  {
+   "src": "stock/pexels_15667292.mp4",
+   "start": 1,
+   "dur": 4.2,
+   "kicker": "수극화, 화극금",
+   "title": "물은 불을,\n불은 쇠를",
+   "body": "그리고 쇠는 나무를 눌러요"
+  },
+  {
+   "end": true,
+   "dur": 3.6,
+   "title": "누르는 힘은\n잡아 주는 힘",
+   "body": "두 사람 사주로 보는 궁합",
+   "foot": "hongchaksa.kr"
+  }
+ ]
+}

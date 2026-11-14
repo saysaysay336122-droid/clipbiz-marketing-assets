@@ -1,0 +1,38 @@
+{
+ "theme": "hcs",
+ "credit": "영상 Pexels",
+ "music": true,
+ "scenes": [
+  {
+   "src": "stock/pexels_19032274.mp4",
+   "start": 1,
+   "dur": 4.4,
+   "kicker": "2027 정미년",
+   "title": "갑목 일간에게는\n어떤 해일까",
+   "body": "곧게 자라는 큰 나무, 갑목"
+  },
+  {
+   "src": "stock/pexels_6227239.mp4",
+   "start": 0.3,
+   "dur": 4.2,
+   "kicker": "정 丁",
+   "title": "정은 불,\n표현의 기운",
+   "body": "갑목에게는 상관으로 읽어요"
+  },
+  {
+   "src": "stock/pexels_8544161.mp4",
+   "start": 0.5,
+   "dur": 4.4,
+   "kicker": "미 未",
+   "title": "미는 흙,\n손에 쥐는 결과",
+   "body": "미 속 기토는 갑목의 정재예요"
+  },
+  {
+   "end": true,
+   "dur": 3.6,
+   "title": "무료 풀이로\n결과부터 먼저",
+   "body": "재미와 자기 성찰을 위한 풀이예요",
+   "foot": "hongchaksa.kr"
+  }
+ ]
+}

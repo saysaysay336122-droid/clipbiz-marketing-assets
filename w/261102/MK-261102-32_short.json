@@ -1,0 +1,38 @@
+{
+ "theme": "hcs",
+ "credit": "영상 Pexels",
+ "music": true,
+ "scenes": [
+  {
+   "src": "stock/pexels_31960017.mp4",
+   "start": 0.2,
+   "dur": 4.0,
+   "kicker": "사주의 새해",
+   "title": "1월 1일이\n아니에요",
+   "body": "해와 달은 절기로 바뀌어요"
+  },
+  {
+   "src": "stock/pexels_6529431.mp4",
+   "start": 2,
+   "dur": 4.4,
+   "kicker": "입동",
+   "title": "입동부터\n기해월",
+   "body": "사주의 달이 바뀌는 날이에요"
+  },
+  {
+   "src": "stock/pexels_7379774.mp4",
+   "start": 2,
+   "dur": 4.4,
+   "kicker": "2027 정미년",
+   "title": "2월 4일\n입춘부터",
+   "body": "입춘 전 생일은 앞 해 기운으로"
+  },
+  {
+   "end": true,
+   "dur": 3.6,
+   "title": "열두 달 흐름은\n무료 풀이부터",
+   "body": "재미와 자기 성찰을 위한 풀이예요",
+   "foot": "hongchaksa.kr"
+  }
+ ]
+}

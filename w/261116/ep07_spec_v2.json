@@ -1,0 +1,682 @@
+{
+ "title": "홍책사 7화 답장 무르기 v2",
+ "target_sec": 50.0,
+ "reserve_ratio": 0.25,
+ "characters": {
+  "eunseo": {
+   "name": "은서",
+   "face": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_9b4e38ea955e4de3a0c5e5f9ce274867/output/output_0.png",
+   "fixed": "인물 은서: 20대 후반 한국 여성, 가운데 가르마의 어깨 길이 흑갈색 머리, 크고 맑은 눈, 촉촉한 로즈빛 입술, 크림색 니트와 연베이지 코트, 작은 은색 귀걸이, 참고 사진 얼굴과 똑같이.",
+   "voice": "20대 후반 여성의 맑고 부드러운 중음, 서울말"
+  },
+  "jiho": {
+   "name": "지호",
+   "face": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_bec50ab8f48f4d8d9f17fbde22ac0bb5/output/output_0.png",
+   "fixed": "인물 지호: 18살 한국 남학생, 은테 둥근 안경, 짧은 흑발, 남색 후드티, 장난기 있는 눈, 참고 사진 얼굴과 똑같이.",
+   "voice": "18살 남학생의 약간 허스키하고 장난스러운"
+  },
+  "hong": {
+   "name": "홍책사",
+   "face": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_01270877f3174713ad984cf5576307b2/output/output_0.png",
+   "fixed": "인물 홍책사: 30대 후반 한국 남성 카페 사장, 검은 터틀넥과 남색 앞치마, 단정한 짧은 머리, 차분하고 깊은 눈빛, 가운데 네모 구멍이 뚫린 오래된 놋쇠 엽전 하나, 참고 사진 얼굴과 똑같이.",
+   "voice": "30대 후반 남성의 낮고 차분한 바리톤, 느리고 여유 있는"
+  }
+ },
+ "sets": {
+  "cafe": {
+   "model": "nano-banana-pro",
+   "desc": "오후 2시 동네 카페 창가 자리. 큰 통유리 창으로 부드러운 햇빛이 비스듬히 들어오고, 원목 테이블과 크림색 벽, 창밖에 노란 은행잎. 카운터는 화면 오른쪽 뒤쪽에 보이고 원두 병과 잔이 정돈되어 있다. 간판, 메뉴판, 포장지에 글자 없음.",
+   "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_b8a196214016480a8022a02c4e7b0ab0/output/output_0.png"
+  }
+ },
+ "style": {
+  "still": "실사 한국 드라마 한 장면, 한 장의 단일 장면, 분할 화면 없음, 85mm 렌즈, 얕은 심도, 부드러운 옆빛, 자연스러운 피부결, 따뜻한 색감, 과한 보정 없음, 화면에 글자와 자막과 로고 없음.",
+  "video": "실사 한국 드라마, 9:16 세로, 720p, 85mm 렌즈 느낌, 얕은 심도, 부드러운 옆빛, 자연스러운 피부결과 움직임, 배경음악 없음, 화면에 글자와 자막과 로고 없음, 휴대폰 화면은 밝게 빈 화면.",
+  "negative": "자막, 글자, 워터마크, 로고, 얼굴 변형, 다른 얼굴로 바뀜, 손가락 왜곡, 과한 보정, 만화풍, 배경음악, 다른 사람 목소리, 장면 전환"
+ },
+ "shots": [
+  {
+   "id": "S1",
+   "t": [
+    0.0,
+    3.0
+   ],
+   "kind": "video",
+   "gen_sec": 4,
+   "use": [
+    0.2,
+    3.2
+   ],
+   "set": "cafe",
+   "chars": [
+    "eunseo"
+   ],
+   "speaker": "eunseo",
+   "line": "보냈다.",
+   "cue": 0.3,
+   "audio": true,
+   "framing": "가슴 위 미디엄 클로즈업, 눈높이, 창가 테이블.",
+   "camera": "고정, 아주 천천히 앞으로.",
+   "still": "은서가 두 손으로 휴대폰을 쥔 채 막 전송을 누르고 눈이 커진 순간, 휴대폰 화면은 카메라에서 보이지 않는다.",
+   "action": "0~1초 엄지를 화면에서 떼며 굳는다, 1~3초 숨을 멈추고 휴대폰을 내려다본다.",
+   "caption": "새벽 3시에 온 자니, 나흘 만에 답했다",
+   "sfx": [
+    [
+     0.0,
+     "pop",
+     1.0
+    ],
+    [
+     0.35,
+     "heart",
+     0.6
+    ]
+   ],
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_a96b57069e0e49da869392e8efd3cd0a/output/output_0.png"
+  },
+  {
+   "id": "S2",
+   "t": [
+    3.0,
+    5.5
+   ],
+   "kind": "comp",
+   "comp": "chat",
+   "chat": [
+    "준: 자니? (월요일 새벽 3:02)",
+    "은서: 응 안 자 (금요일 오후 2:02)",
+    "준: 나흘 지났어"
+   ],
+   "sfx": [
+    [
+     3.0,
+     "pop",
+     0.7
+    ],
+    [
+     3.85,
+     "pop",
+     0.7
+    ],
+    [
+     4.7,
+     "ding",
+     0.9
+    ]
+   ]
+  },
+  {
+   "id": "S3",
+   "t": [
+    5.5,
+    8.0
+   ],
+   "kind": "video",
+   "gen_sec": 4,
+   "use": [
+    0.3,
+    2.8
+   ],
+   "set": "cafe",
+   "chars": [
+    "eunseo"
+   ],
+   "speaker": "eunseo",
+   "line": "아, 진짜.",
+   "cue": 0.6,
+   "audio": true,
+   "framing": "미디엄 클로즈업, 같은 창가.",
+   "camera": "고정.",
+   "still": "은서가 두 손으로 얼굴을 반쯤 가리기 직전, 민망한 표정.",
+   "action": "0~1초 두 손으로 얼굴을 덮는다, 1~3초 손가락 사이로 휴대폰을 힐끗 본다.",
+   "sfx": [],
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_562e7fdfbd5643188ed482075716f7a1/output/output_0.png",
+   "note": "은서, 5화 택시 그 사람"
+  },
+  {
+   "id": "S4",
+   "t": [
+    8.0,
+    12.0
+   ],
+   "kind": "video",
+   "gen_sec": 5,
+   "use": [
+    0.5,
+    4.5
+   ],
+   "set": "cafe",
+   "chars": [
+    "hong"
+   ],
+   "speaker": "hong",
+   "line": "한 수 물러 드릴까요?",
+   "cue": 1.8,
+   "audio": true,
+   "framing": "카운터 뒤 홍책사 미디엄 숏, 화면 앞쪽에 은서 뒷모습이 흐리게.",
+   "camera": "고정, 1초쯤 홍책사 쪽으로 살짝 초점 이동.",
+   "still": "홍책사가 카운터 뒤에서 엽전을 엄지에 올려 튕기기 직전, 입가에 옅은 미소.",
+   "action": "0~1.5초 엽전을 위로 튕겨 손바닥으로 받는다, 1.5~4초 은서 쪽을 보며 말한다.",
+   "caption": "",
+   "sfx": [
+    [
+     8.0,
+     "chime",
+     1.0
+    ],
+    [
+     8.4,
+     "coin",
+     1.0
+    ]
+   ],
+   "tag": "홍책사",
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_f5565d04b254457397f08d99a62a0b6b/output/output_0.png"
+  },
+  {
+   "id": "S5",
+   "t": [
+    12.0,
+    13.0
+   ],
+   "kind": "comp",
+   "comp": "rewind",
+   "caption": "무르기 1",
+   "sfx": [
+    [
+     12.0,
+     "rewind",
+     1.0
+    ]
+   ]
+  },
+  {
+   "id": "S6",
+   "t": [
+    13.0,
+    15.0
+   ],
+   "kind": "video",
+   "gen_sec": 4,
+   "use": [
+    0.2,
+    2.2
+   ],
+   "set": "cafe",
+   "chars": [
+    "eunseo"
+   ],
+   "audio": false,
+   "framing": "어깨 너머가 아닌 정면 미디엄 클로즈업, 같은 창가.",
+   "camera": "고정.",
+   "still": "은서가 결심한 얼굴로 두 엄지로 빠르게 글을 쓰기 시작하는 순간, 휴대폰 화면은 보이지 않는다.",
+   "action": "0~4초 두 엄지로 빠르게 글을 쓰다가 잠깐 멈추고 다시 쓴다, 표정은 진지하다가 점점 부드러워진다.",
+   "sfx": [
+    [
+     13.15,
+     "click",
+     1.0
+    ],
+    [
+     13.45,
+     "click",
+     1.0
+    ],
+    [
+     13.8,
+     "click",
+     1.0
+    ],
+    [
+     14.2,
+     "click",
+     1.0
+    ],
+    [
+     14.55,
+     "click",
+     1.0
+    ]
+   ],
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_56243ac606134540ae45e83e0c05bf64/output/output_0.png"
+  },
+  {
+   "id": "S7",
+   "t": [
+    15.0,
+    17.5
+   ],
+   "kind": "comp",
+   "comp": "chat",
+   "chat": [
+    "은서: 그날 밤 너네 집 앞까지 갔었어",
+    "은서: 택시에서 못 내렸어",
+    "준: 헐"
+   ],
+   "sfx": [
+    [
+     15.0,
+     "pop",
+     0.6
+    ],
+    [
+     15.85,
+     "pop",
+     0.6
+    ],
+    [
+     16.7,
+     "ding",
+     0.9
+    ]
+   ]
+  },
+  {
+   "id": "S8",
+   "t": [
+    17.5,
+    19.5
+   ],
+   "kind": "video",
+   "gen_sec": 4,
+   "use": [
+    0.6,
+    2.6
+   ],
+   "set": "cafe",
+   "chars": [
+    "eunseo"
+   ],
+   "audio": false,
+   "framing": "테이블 높이 미디엄 숏.",
+   "camera": "고정.",
+   "still": "은서가 어깨를 축 늘어뜨리고 테이블을 내려다보는 순간.",
+   "action": "0~2초 이마를 천천히 테이블에 댄다, 2~4초 그대로 엎드린다.",
+   "sfx": [
+    [
+     18.9,
+     "thunk",
+     0.9
+    ]
+   ],
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_3a23dc7930a144029d7d87538bb34da4/output/output_0.png"
+  },
+  {
+   "id": "S9",
+   "t": [
+    19.5,
+    24.5
+   ],
+   "kind": "video",
+   "gen_sec": 6,
+   "use": [
+    0.4,
+    5.4
+   ],
+   "set": "cafe",
+   "chars": [
+    "hong"
+   ],
+   "speaker": "hong",
+   "line": "마지막 무르기예요. 질문으로 보내요.",
+   "cue": 1.0,
+   "audio": true,
+   "framing": "테이블 옆에 선 홍책사 미디엄 클로즈업, 화면 아래쪽에 엎드린 은서의 머리가 살짝.",
+   "camera": "아주 천천히 앞으로.",
+   "still": "홍책사가 유자차 잔을 은서 옆 테이블에 내려놓는 순간, 따뜻한 옆빛.",
+   "action": "0~1초 잔을 내려놓는다, 1~5초 몸을 조금 숙여 부드럽게 말한다.",
+   "sfx": [
+    [
+     19.5,
+     "chime",
+     0.6
+    ]
+   ],
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_8676d7b6ad084167ba7691b1232d9e92/output/output_0.png"
+  },
+  {
+   "id": "S10",
+   "t": [
+    24.5,
+    25.5
+   ],
+   "kind": "comp",
+   "comp": "rewind",
+   "caption": "무르기 2",
+   "sfx": [
+    [
+     24.5,
+     "rewind",
+     0.9
+    ]
+   ]
+  },
+  {
+   "id": "S11",
+   "t": [
+    25.5,
+    27.3
+   ],
+   "kind": "video",
+   "reuse": "S6",
+   "use": [
+    2.2,
+    4.0
+   ],
+   "sfx": [
+    [
+     25.7,
+     "click",
+     0.8
+    ],
+    [
+     26.3,
+     "click",
+     0.8
+    ],
+    [
+     26.9,
+     "click",
+     0.8
+    ]
+   ]
+  },
+  {
+   "id": "S12",
+   "t": [
+    27.3,
+    29.8
+   ],
+   "kind": "comp",
+   "comp": "chat",
+   "chat": [
+    "은서: 지호가 형 보고 싶대. 토요일에 시간 돼?",
+    "준: 좋아. 토요일에 봐"
+   ],
+   "sfx": [
+    [
+     27.3,
+     "pop",
+     0.6
+    ],
+    [
+     28.55,
+     "ding",
+     0.8
+    ],
+    [
+     28.9,
+     "heart",
+     0.7
+    ]
+   ]
+  },
+  {
+   "id": "S13",
+   "t": [
+    29.8,
+    32.8
+   ],
+   "kind": "video",
+   "gen_sec": 4,
+   "use": [
+    0.3,
+    3.3
+   ],
+   "set": "cafe",
+   "chars": [
+    "eunseo"
+   ],
+   "audio": false,
+   "framing": "얼굴 클로즈업, 창 쪽 햇빛이 볼에 닿는다.",
+   "camera": "아주 천천히 앞으로.",
+   "still": "은서가 휴대폰을 가슴께로 내리며 참던 웃음이 번지는 순간.",
+   "action": "0~2초 아랫입술을 살짝 깨물며 웃음을 참는다, 2~3.5초 창밖을 보며 환하게 웃는다.",
+   "sfx": [],
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_190323148e4f4dd284b86f4c717c9994/output/output_0.png"
+  },
+  {
+   "id": "S13b",
+   "t": [
+    32.8,
+    36.3
+   ],
+   "kind": "comp",
+   "comp": "chat",
+   "caption": "그 시각, 준의 휴대폰",
+   "chat_title": "은서",
+   "chat_me": "준",
+   "chat": [
+    "은서: 지호가 형 보고 싶대. 토요일에 시간 돼?",
+    "지움: 좋아ㅎㅎ",
+    "지움: 나도 보고 싶었어",
+    "지움: 지호 핑계 아니지?",
+    "준: 좋아. 토요일에 봐"
+   ],
+   "sfx": [
+    [
+     33.5,
+     "click",
+     0.5
+    ],
+    [
+     34.2,
+     "heart",
+     0.8
+    ],
+    [
+     34.9,
+     "click",
+     0.5
+    ],
+    [
+     35.6,
+     "pop",
+     0.7
+    ]
+   ]
+  },
+  {
+   "id": "S14",
+   "t": [
+    36.3,
+    40.3
+   ],
+   "kind": "video",
+   "gen_sec": 5,
+   "use": [
+    0.3,
+    4.3
+   ],
+   "set": "cafe",
+   "chars": [
+    "eunseo",
+    "jiho"
+   ],
+   "speaker": "jiho",
+   "line": "나 그런 말 한 적 없는데?",
+   "cue": 0.6,
+   "audio": true,
+   "framing": "투 숏, 앉은 은서 뒤에서 지호가 어깨 너머로 얼굴을 들이민다.",
+   "camera": "고정.",
+   "still": "지호가 은서 어깨 뒤에서 휴대폰을 내려다보며 장난스럽게 눈썹을 올린 순간, 은서는 아직 모른다.",
+   "action": "0~1초 지호가 고개를 들이민다, 1~3초 지호가 말한다, 3~4초 은서가 놀라 휴대폰을 가슴에 붙인다. 은서는 말하지 않는다.",
+   "sfx": [
+    [
+     36.3,
+     "scratch",
+     1.0
+    ]
+   ],
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_2cf79bb130414f90a55ef558e5abc986/output/output_0.png",
+   "note": "동생 지호, 6화 그 수험생"
+  },
+  {
+   "id": "S15",
+   "t": [
+    40.3,
+    43.0
+   ],
+   "kind": "video",
+   "gen_sec": 4,
+   "use": [
+    0.3,
+    3.0
+   ],
+   "set": "cafe",
+   "chars": [
+    "eunseo",
+    "jiho"
+   ],
+   "speaker": "eunseo",
+   "line": "떡볶이 사 줄게.",
+   "cue": 0.4,
+   "audio": true,
+   "framing": "은서 쪽 미디엄 클로즈업, 화면 가장자리에 지호 어깨.",
+   "camera": "고정.",
+   "still": "은서가 지호 쪽으로 몸을 돌려 검지를 입술에 대는 순간.",
+   "action": "0~1초 검지를 입술에 댄다, 1~2.5초 빠르게 속삭인다. 지호는 말하지 않고 씩 웃는다.",
+   "sfx": [],
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_0aff5f80a1874caaa52b5c95849a233f/output/output_0.png"
+  },
+  {
+   "id": "S16",
+   "t": [
+    43.0,
+    47.0
+   ],
+   "kind": "video",
+   "gen_sec": 7,
+   "use": [
+    1.5,
+    5.5
+   ],
+   "set": "cafe",
+   "chars": [
+    "hong"
+   ],
+   "speaker": "hong",
+   "line": "홍책사 한 수면, 됐지?",
+   "cue": 3.0,
+   "audio": true,
+   "framing": "카운터의 홍책사 클로즈업.",
+   "camera": "1초부터 천천히 얼굴로 다가간다.",
+   "still": "홍책사가 엽전을 엄지 위에 올린 순간, 눈은 카메라 쪽.",
+   "action": "0~2초 엽전을 튕겨 받는다, 2~5.5초 카메라를 보며 옅게 웃고 말한다.",
+   "sfx": [
+    [
+     43.05,
+     "coin",
+     1.0
+    ],
+    [
+     46.3,
+     "chime",
+     0.5
+    ]
+   ],
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_e8d97cce5d5d43f2b3e5db59bce311dd/output/output_0.png"
+  },
+  {
+   "id": "S17",
+   "t": [
+    47.0,
+    50.0
+   ],
+   "kind": "comp",
+   "comp": "endcard",
+   "caption": "7닢째, 그 사람과 잘될까 궁금할 땐, hongchaksa.kr",
+   "sfx": [
+    [
+     47.0,
+     "logo",
+     1.0
+    ]
+   ],
+   "coins": [
+    "축사",
+    "회식",
+    "소개팅",
+    "빼빼로",
+    "택시",
+    "다녀와",
+    "무르기"
+   ]
+  }
+ ],
+ "video_model": "bytedance/seedance-2.0",
+ "music": [
+  [
+   0,
+   8,
+   "comedy",
+   "F"
+  ],
+  [
+   8,
+   12,
+   "theme",
+   "F"
+  ],
+  [
+   12,
+   13,
+   "stop",
+   "F"
+  ],
+  [
+   13,
+   18.45,
+   "comedy",
+   "F"
+  ],
+  [
+   18.45,
+   18.9,
+   "stop",
+   "F"
+  ],
+  [
+   18.9,
+   19.5,
+   "comedy",
+   "F"
+  ],
+  [
+   19.5,
+   24.5,
+   "theme",
+   "F"
+  ],
+  [
+   24.5,
+   25.5,
+   "stop",
+   "F"
+  ],
+  [
+   25.5,
+   35.85,
+   "romance",
+   "F"
+  ],
+  [
+   35.85,
+   36.3,
+   "stop",
+   "F"
+  ],
+  [
+   36.3,
+   43.0,
+   "comedy",
+   "F"
+  ],
+  [
+   43.0,
+   50.0,
+   "theme",
+   "F"
+  ]
+ ]
+}

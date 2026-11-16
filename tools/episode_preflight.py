@@ -62,7 +62,9 @@ def build_prompts(spec):
             sound = "대사 없음. 사람 목소리와 말소리 없음, 작은 현장음만."
         video = (f"시작 사진에서 이어지는 한 컷, 장면 전환 없음. 카메라: {sh['camera']} 동작: {sh['action']} {sound} "
                  f"시작 사진과 같은 얼굴, 머리, 옷, 소품, 빛을 끝까지 유지. {video_suffix}")
-        out.append(dict(id=sh["id"], refs=refs, still=still, video=video, sec=sh["gen_sec"], audio=bool(sh.get("line"))))
+        video = f"{video} 넣지 말 것: {neg}."
+        out.append(dict(id=sh["id"], refs=refs, still=still, video=video, sec=sh["gen_sec"], audio=bool(sh.get("line")),
+                        still_url=sh.get("still_url")))
     return set_prompts, out, neg
 
 
@@ -85,7 +87,8 @@ def check(spec):
     for sh in shots:
         a, b = sh["t"]
         dur = b - a
-        texts = [sh.get("line", ""), sh.get("caption", "")] + [m for m in sh.get("chat", [])]
+        texts = [sh.get("line", ""), sh.get("caption", ""), sh.get("note", ""), sh.get("chat_title", "")] + [m for m in sh.get("chat", [])]
+        texts += sh.get("coins", [])
         for tx in texts:
             for c in BANNED_CHARS:
                 if c in tx:
@@ -136,8 +139,8 @@ def check(spec):
 
 
 def estimate(spec, video_prompts):
-    stills = sum(PRICE[s.get("model", "nano-banana-pro")] for s in spec["sets"].values())
-    stills += 75 * len(video_prompts)
+    stills = sum(PRICE[s.get("model", "nano-banana-pro")] for s in spec["sets"].values() if not s.get("url"))
+    stills += 75 * sum(1 for p in video_prompts if not p.get("still_url"))
     vids = sum(p["sec"] for p in video_prompts) * VIDEO_PER_SEC
     reserve = round((stills + vids) * spec.get("reserve_ratio", 0.25))
     return stills, vids, reserve
@@ -157,9 +160,15 @@ def main():
     for k, p in set_p.items():
         lines += [f"{k} ({spec['sets'][k].get('model', 'nano-banana-pro')}): {p}", ""]
     lines.append(f"## 샷별 지시문 (부정 지시 공통: {neg})")
+    model = spec.get("video_model", "bytedance/seedance-2.0")
     for p in vp:
         lines += [f"### {p['id']} 영상 {p['sec']}초, 오디오 {'켬' if p['audio'] else '끔'}",
-                  f"참고 이미지: {', '.join(p['refs'])}", f"시작 사진: {p['still']}", f"영상: {p['video']}", ""]
+                  f"참고 이미지: {', '.join(p['refs'])}", f"시작 사진: {p.get('still_url') or '(아직 없음) ' + p['still']}", f"영상: {p['video']}"]
+        if p.get("still_url"):
+            cmd = dict(model=model, options=dict(prompt=p["video"], start_frame=p["still_url"], generation_mode="frame", duration=p["sec"],
+                                                 resolution="720p", aspect_ratio="9:16", generate_audio=p["audio"]))
+            lines += ["드롭샷 명령:", "```json", json.dumps(cmd, ensure_ascii=False, indent=1), "```"]
+        lines.append("")
     text = "\n".join(lines)
     if out:
         open(out, "w", encoding="utf-8").write(text)

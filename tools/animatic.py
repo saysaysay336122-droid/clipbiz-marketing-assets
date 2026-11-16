@@ -83,10 +83,24 @@ def sub_overlay(speaker, line):
 def chat_frames(msgs, bg, title="준", me="은서"):
     frames = []
     back = bg.filter(ImageFilter.GaussianBlur(18)).point(lambda v: int(v * 0.55))
+    meas = ImageDraw.Draw(back.copy())
+    total = 0
+    for m in msgs:
+        body = m.split(":", 1)[1].strip()
+        n, cur = 1, ""
+        for wd in body.split(" "):
+            cand = (cur + " " + wd).strip()
+            if meas.textlength(cand, font=font(54, False)) > 600 and cur:
+                n += 1
+                cur = wd
+            else:
+                cur = cand
+        total += 34 + 68 * n + 34
     for k in range(1, len(msgs) + 1):
         im = back.copy()
         d = ImageDraw.Draw(im)
-        x0, y0, x1, y1 = 110, 300, 970, 1620
+        x0, y0, x1 = 70, 330, 1010
+        y1 = min(1640, max(y0 + 760, y0 + 180 + total + 50))
         d.rounded_rectangle((x0, y0, x1, y1), 50, fill=(246, 246, 248))
         d.rectangle((x0, y0 + 40, x1, y0 + 130), fill=(236, 236, 240))
         d.text((x0 + 40, y0 + 62), title, font=font(44), fill=(30, 30, 30))
@@ -96,27 +110,27 @@ def chat_frames(msgs, bg, title="준", me="은서"):
             body = body.strip()
             draft = who.strip() == "지움"
             mine = who.strip() == me or draft
-            f = font(48, False)
+            f = font(54, False)
             lines = []
             cur = ""
             for wd in body.split(" "):
                 cand = (cur + " " + wd).strip()
-                if d.textlength(cand, font=f) > 540 and cur:
+                if d.textlength(cand, font=f) > 600 and cur:
                     lines.append(cur)
                     cur = wd
                 else:
                     cur = cand
             lines.append(cur)
-            bh = 32 + 62 * len(lines)
+            bh = 34 + 68 * len(lines)
             bw = max(d.textlength(l, font=f) for l in lines) + 50
             bx = x1 - 40 - bw if mine else x0 + 40
             fill = (232, 232, 236) if draft else ((196, 226, 255) if mine else (255, 255, 255))
             d.rounded_rectangle((bx, y, bx + bw, y + bh), 26, fill=fill, outline=(205, 205, 212) if draft else (220, 220, 225))
             for i, l in enumerate(lines):
-                d.text((bx + 25, y + 14 + i * 62), l, font=f, fill=(80, 80, 88) if draft else (25, 25, 25))
+                d.text((bx + 26, y + 15 + i * 68), l, font=f, fill=(80, 80, 88) if draft else (25, 25, 25))
                 if draft:
                     lw = d.textlength(l, font=f)
-                    d.line((bx + 22, y + 14 + i * 62 + 36, bx + 28 + lw, y + 14 + i * 62 + 36), fill=(215, 70, 70), width=3)
+                    d.line((bx + 22, y + 15 + i * 68 + 40, bx + 30 + lw, y + 15 + i * 68 + 40), fill=(215, 70, 70), width=3)
             if draft:
                 d.text((bx - 100, y + bh / 2 - 22), "지움", font=font(34), fill=(215, 70, 70))
             y += bh + 34

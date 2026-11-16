@@ -10,9 +10,9 @@ import sfx  # noqa: E402
 import animatic as AN  # noqa: E402
 
 D = "/home/claude/ep7/v"
-SPEC = json.load(open("/home/claude/ep7/ep07_spec_v2.json", encoding="utf-8"))
+SPEC = json.load(open("/home/claude/ep7/ep07_spec_v3.json", encoding="utf-8"))
 ASR = json.load(open(f"{D}/asr.json", encoding="utf-8")) if os.path.exists(f"{D}/asr.json") else {}
-MUSIC = "/home/claude/ep7/ep07_music_v2.wav"
+MUSIC = "/home/claude/ep7/ep07_music_v3.wav"
 COIN = "/home/claude/ep6/v4/stills/coin.png"
 W, H, FPS, SR = 1080, 1920, 30, 48000
 FD = "/usr/share/fonts/opentype/noto/"
@@ -187,7 +187,8 @@ def chat_seg(i, sh, out):
                 im = Image.alpha_composite(im, cap)
             p = f"{D}/ov/{sh['id']}_c{k}.png"
             im.convert("RGB").save(p)
-            fh.write(f"file '{p}'\nduration {dur / len(frames):.4f}\n")
+            hd = sh["hold"][k] if sh.get("hold") else dur / len(frames)
+            fh.write(f"file '{p}'\nduration {hd:.4f}\n")
         fh.write(f"file '{p}'\n")
     run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-vf", f"fps={FPS},format=yuv420p",
          "-t", f"{dur:.3f}", "-c:v", "libx264", "-crf", "16", "-preset", "veryfast", out])
@@ -202,7 +203,9 @@ def rewind_seg(i, sh, out):
     dr = ImageDraw.Draw(im)
     for y in range(0, H, 22):
         dr.line((0, y, W, y), fill=(255, 255, 255, 46), width=2)
-    center_lines(dr, [sh.get("caption", "")], BIGF, 860, 110, stroke=7, fill=(255, 226, 150))
+    center_lines(dr, [sh.get("caption", "")], BIGF, 820, 110, stroke=7, fill=(255, 226, 150))
+    if sh.get("rewind_sub"):
+        center_lines(dr, [sh["rewind_sub"]], F("NotoSansCJK-Bold.ttc", 58), 960, 70, stroke=5)
     p = save(im, f"{sh['id']}_rw")
     fl = (f"[0:v]fps={FPS},setsar=1,scale={W}:{H}:flags=lanczos,reverse,setpts=PTS*{dur / span:.4f},"
           f"eq=saturation=0.6:brightness=0.03,gblur=sigma=1.2,format=yuv420p[b0];"
@@ -313,7 +316,7 @@ js = json.loads(rr[rr.rfind("{"):rr.rfind("}") + 1])
 ln = (f"loudnorm=I=-14:TP=-2:LRA=11:measured_I={js['input_i']}:measured_TP={js['input_tp']}:measured_LRA={js['input_lra']}:"
       f"measured_thresh={js['input_thresh']}:offset={js['target_offset']}:linear=true")
 aip = save(ov_ai(), "ai")
-OUT = f"{D}/hcs_ep07_mureugi.mp4"
+OUT = f"{D}/hcs_ep07_mureugi_v3.mp4"
 run(["ffmpeg", "-v", "error", "-y", "-i", f"{D}/video_noai.mp4", "-framerate", "30", "-loop", "1", "-i", aip, "-i", f"{D}/mix.wav",
      "-filter_complex", f"[1:v]format=rgba[a];[0:v][a]overlay=0:0:shortest=1,format=yuv420p[v];[2:a]{ln},alimiter=limit=0.55:attack=1:release=50:level=disabled,aresample=48000[au]",
      "-map", "[v]", "-map", "[au]", "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-r", "30", "-c:a", "aac", "-b:a", "192k",

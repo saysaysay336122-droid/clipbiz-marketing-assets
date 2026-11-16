@@ -10,9 +10,9 @@ import sfx  # noqa: E402
 import animatic as AN  # noqa: E402
 
 D = "/home/claude/ep7/v"
-SPEC = json.load(open("/home/claude/ep7/ep07_spec_v3.json", encoding="utf-8"))
+SPEC = json.load(open("/home/claude/ep7/ep07_spec_v4.json", encoding="utf-8"))
 ASR = json.load(open(f"{D}/asr.json", encoding="utf-8")) if os.path.exists(f"{D}/asr.json") else {}
-MUSIC = "/home/claude/ep7/ep07_music_v3.wav"
+MUSIC = "/home/claude/ep7/ep07_music_v4.wav"
 COIN = "/home/claude/ep6/v4/stills/coin.png"
 W, H, FPS, SR = 1080, 1920, 30, 48000
 FD = "/usr/share/fonts/opentype/noto/"
@@ -68,7 +68,8 @@ def ov_sub(text):
 
 def ov_caption(text, y=230):
     im = canvas()
-    center_lines(ImageDraw.Draw(im), wrap(text, 13), CAPF, y, 90, stroke=6)
+    lines = text.split("\n") if "\n" in text else wrap(text, 13)
+    center_lines(ImageDraw.Draw(im), lines, CAPF, y, 90, stroke=6)
     return im
 
 
@@ -129,7 +130,8 @@ def sub_window(sh):
     dur = sh["t"][1] - sh["t"][0]
     a = ASR.get(sh["id"], {})
     if a.get("span"):
-        s, e = a["span"][0] - u0 - 0.08, a["span"][1] - u0 + 0.35
+        k = sh.get("speed", 1.0)
+        s, e = (a["span"][0] - u0) / k - 0.08, (a["span"][1] - u0) / k + 0.35
     else:
         s, e = sh.get("cue", 0.5) - u0, sh.get("cue", 0.5) - u0 + 1.8
     return max(0.0, s), min(dur, max(e, s + 1.0))
@@ -140,8 +142,9 @@ def video_seg(sh, out):
     dur = b - a
     u0, u1 = sh["use"]
     src = clip_of(sh)
-    ins = ["-ss", f"{u0:.3f}", "-t", f"{dur + 0.2:.3f}", "-i", src]
-    fl = [f"[0:v]fps={FPS},setsar=1,scale={W}:{H}:flags=lanczos,unsharp=5:5:0.4,tpad=stop_mode=clone:stop_duration=0.3,format=yuv420p[b0]"]
+    k = sh.get("speed", 1.0)
+    ins = ["-ss", f"{u0:.3f}", "-t", f"{dur * k + 0.2:.3f}", "-i", src]
+    fl = [f"[0:v]setpts=PTS/{k},fps={FPS},setsar=1,scale={W}:{H}:flags=lanczos,unsharp=5:5:0.4,tpad=stop_mode=clone:stop_duration=0.3,format=yuv420p[b0]"]
     ovs = []
     if sh.get("caption"):
         ovs.append((0.0, dur, ov_caption(sh["caption"])))
@@ -260,8 +263,9 @@ run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", f"{D}/se
 
 
 # 오디오
-def load(src, a, dur, ch=1):
-    r = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{a:.3f}", "-t", f"{dur:.3f}", "-i", src, "-ac", str(ch), "-ar", str(SR),
+def load(src, a, dur, ch=1, tempo=1.0):
+    af = ["-af", f"atempo={tempo}"] if tempo != 1.0 else []
+    r = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{a:.3f}", "-t", f"{dur * tempo:.3f}", "-i", src, *af, "-ac", str(ch), "-ar", str(SR),
                         "-f", "s16le", "-"], capture_output=True).stdout
     return np.frombuffer(r, np.int16).astype(float) / 32768
 
@@ -273,7 +277,7 @@ for sh in SH:
     if sh["kind"] != "video" or not sh.get("line") or sh.get("reuse"):
         continue
     a, b = sh["t"]
-    x = load(clip_of(sh), sh["use"][0], b - a)
+    x = load(clip_of(sh), sh["use"][0], b - a, tempo=sh.get("speed", 1.0))
     if len(x) == 0:
         continue
     v = x[np.abs(x) > 0.02]
@@ -316,7 +320,7 @@ js = json.loads(rr[rr.rfind("{"):rr.rfind("}") + 1])
 ln = (f"loudnorm=I=-14:TP=-2:LRA=11:measured_I={js['input_i']}:measured_TP={js['input_tp']}:measured_LRA={js['input_lra']}:"
       f"measured_thresh={js['input_thresh']}:offset={js['target_offset']}:linear=true")
 aip = save(ov_ai(), "ai")
-OUT = f"{D}/hcs_ep07_mureugi_v3.mp4"
+OUT = f"{D}/hcs_ep07_mureugi_v4.mp4"
 run(["ffmpeg", "-v", "error", "-y", "-i", f"{D}/video_noai.mp4", "-framerate", "30", "-loop", "1", "-i", aip, "-i", f"{D}/mix.wav",
      "-filter_complex", f"[1:v]format=rgba[a];[0:v][a]overlay=0:0:shortest=1,format=yuv420p[v];[2:a]{ln},alimiter=limit=0.55:attack=1:release=50:level=disabled,aresample=48000[au]",
      "-map", "[v]", "-map", "[au]", "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-r", "30", "-c:a", "aac", "-b:a", "192k",

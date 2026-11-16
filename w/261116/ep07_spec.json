@@ -1,6 +1,6 @@
 {
  "title": "홍책사 7화 답장 무르기 v2",
- "target_sec": 59.0,
+ "target_sec": 53.85,
  "reserve_ratio": 0.25,
  "characters": {
   "eunseo": {
@@ -59,7 +59,7 @@
    "camera": "고정, 아주 천천히 앞으로.",
    "still": "은서가 두 손으로 휴대폰을 쥔 채 막 전송을 누르고 눈이 커진 순간, 휴대폰 화면은 카메라에서 보이지 않는다.",
    "action": "0~1초 엄지를 화면에서 떼며 굳는다, 1~3초 숨을 멈추고 휴대폰을 내려다본다.",
-   "caption": "새벽 3시에 온 자니, 나흘 만에 답했다",
+   "caption": "새벽 3시 전 남친의 자니,\n나흘 만에 답했다",
    "sfx": [
     [
      0.0,
@@ -72,13 +72,14 @@
      0.6
     ]
    ],
-   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_a96b57069e0e49da869392e8efd3cd0a/output/output_0.png"
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_a96b57069e0e49da869392e8efd3cd0a/output/output_0.png",
+   "speed": 1.0
   },
   {
    "id": "S2",
    "t": [
     3.0,
-    7.6
+    7.2
    ],
    "kind": "comp",
    "comp": "chat",
@@ -94,27 +95,28 @@
      0.7
     ],
     [
-     4.4,
+     4.3,
      "pop",
      0.7
     ],
     [
-     5.9,
+     5.7,
      "ding",
      0.9
     ]
    ],
    "hold": [
+    1.3,
     1.4,
-    1.5,
-    1.7
-   ]
+    1.5
+   ],
+   "caption": "준, 은서의 전 남친"
   },
   {
    "id": "S3",
    "t": [
-    7.6,
-    10.1
+    7.2,
+    9.7
    ],
    "kind": "video",
    "gen_sec": 4,
@@ -136,19 +138,20 @@
    "action": "0~1초 두 손으로 얼굴을 덮는다, 1~3초 손가락 사이로 휴대폰을 힐끗 본다.",
    "sfx": [],
    "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_562e7fdfbd5643188ed482075716f7a1/output/output_0.png",
-   "note": "은서, 5화 택시 그 사람"
+   "note": "은서, 5화 택시 그 사람",
+   "speed": 1.0
   },
   {
    "id": "S4",
    "t": [
-    10.1,
-    14.3
+    9.7,
+    12.8
    ],
    "kind": "video",
    "gen_sec": 5,
    "use": [
-    0.5,
-    4.7
+    1.0,
+    4.41
    ],
    "set": "cafe",
    "chars": [
@@ -165,32 +168,33 @@
    "caption": "",
    "sfx": [
     [
-     10.1,
+     9.7,
      "chime",
      1.0
     ],
     [
-     10.5,
+     9.82,
      "coin",
      1.0
     ]
    ],
    "tag": "홍책사",
    "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_f5565d04b254457397f08d99a62a0b6b/output/output_0.png",
-   "sub": "한 수를 물러 드릴까요?"
+   "sub": "한 수를 물러 드릴까요?",
+   "speed": 1.1
   },
   {
    "id": "S5",
    "t": [
-    14.3,
-    15.7
+    12.8,
+    14.2
    ],
    "kind": "comp",
    "comp": "rewind",
    "caption": "무르기 1",
    "sfx": [
     [
-     14.3,
+     12.8,
      "rewind",
      1.0
     ]
@@ -200,14 +204,14 @@
   {
    "id": "S6",
    "t": [
-    15.7,
-    17.7
+    14.2,
+    16.0
    ],
    "kind": "video",
    "gen_sec": 4,
    "use": [
     0.2,
-    2.2
+    2.0
    ],
    "set": "cafe",
    "chars": [
@@ -220,38 +224,39 @@
    "action": "0~4초 두 엄지로 빠르게 글을 쓰다가 잠깐 멈추고 다시 쓴다, 표정은 진지하다가 점점 부드러워진다.",
    "sfx": [
     [
-     15.85,
+     14.35,
      "click",
      1.0
     ],
     [
-     16.15,
+     14.65,
      "click",
      1.0
     ],
     [
-     16.5,
+     15.0,
      "click",
      1.0
     ],
     [
-     16.9,
+     15.4,
      "click",
      1.0
     ],
     [
-     17.25,
+     15.75,
      "click",
      1.0
     ]
    ],
-   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_56243ac606134540ae45e83e0c05bf64/output/output_0.png"
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_56243ac606134540ae45e83e0c05bf64/output/output_0.png",
+   "speed": 1.0
   },
   {
    "id": "S7",
    "t": [
-    17.7,
-    22.1
+    16.0,
+    20.2
    ],
    "kind": "comp",
    "comp": "chat",
@@ -262,24 +267,24 @@
    ],
    "sfx": [
     [
-     17.7,
+     16.0,
      "pop",
      0.6
     ],
     [
-     19.4,
+     17.6,
      "pop",
      0.6
     ],
     [
-     20.7,
+     18.8,
      "ding",
      0.9
     ]
    ],
    "hold": [
-    1.7,
-    1.3,
+    1.6,
+    1.2,
     1.4
    ],
    "caption": "솔직하게 보냈다"
@@ -287,8 +292,8 @@
   {
    "id": "S8",
    "t": [
-    22.1,
-    24.1
+    20.2,
+    22.2
    ],
    "kind": "video",
    "gen_sec": 4,
@@ -307,24 +312,25 @@
    "action": "0~2초 이마를 천천히 테이블에 댄다, 2~4초 그대로 엎드린다.",
    "sfx": [
     [
-     23.5,
+     21.6,
      "thunk",
      0.9
     ]
    ],
-   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_3a23dc7930a144029d7d87538bb34da4/output/output_0.png"
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_3a23dc7930a144029d7d87538bb34da4/output/output_0.png",
+   "speed": 1.0
   },
   {
    "id": "S9",
    "t": [
-    24.1,
-    29.1
+    22.2,
+    25.75
    ],
    "kind": "video",
    "gen_sec": 6,
    "use": [
-    0.4,
-    5.4
+    0.6,
+    4.505
    ],
    "set": "cafe",
    "chars": [
@@ -340,25 +346,26 @@
    "action": "0~1초 잔을 내려놓는다, 1~5초 몸을 조금 숙여 부드럽게 말한다.",
    "sfx": [
     [
-     24.1,
+     22.2,
      "chime",
      0.6
     ]
    ],
-   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_8676d7b6ad084167ba7691b1232d9e92/output/output_0.png"
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_8676d7b6ad084167ba7691b1232d9e92/output/output_0.png",
+   "speed": 1.1
   },
   {
    "id": "S10",
    "t": [
-    29.1,
-    30.5
+    25.75,
+    27.15
    ],
    "kind": "comp",
    "comp": "rewind",
    "caption": "무르기 2",
    "sfx": [
     [
-     29.1,
+     25.75,
      "rewind",
      0.9
     ]
@@ -368,38 +375,39 @@
   {
    "id": "S11",
    "t": [
-    30.5,
-    32.3
+    27.15,
+    28.75
    ],
    "kind": "video",
    "reuse": "S6",
    "use": [
     2.2,
-    4.0
+    3.8
    ],
    "sfx": [
     [
-     30.7,
+     27.35,
      "click",
      0.8
     ],
     [
-     31.3,
+     27.95,
      "click",
      0.8
     ],
     [
-     31.9,
+     28.55,
      "click",
      0.8
     ]
-   ]
+   ],
+   "speed": 1.0
   },
   {
    "id": "S12",
    "t": [
-    32.3,
-    36.5
+    28.75,
+    32.75
    ],
    "kind": "comp",
    "comp": "chat",
@@ -409,38 +417,38 @@
    ],
    "sfx": [
     [
-     32.3,
+     28.75,
      "pop",
      0.6
     ],
     [
-     34.7,
+     31.05,
      "ding",
      0.8
     ],
     [
-     35.05,
+     31.4,
      "heart",
      0.7
     ]
    ],
    "hold": [
-    2.4,
-    1.8
+    2.3,
+    1.7
    ],
    "caption": "질문으로 보냈다"
   },
   {
    "id": "S13",
    "t": [
-    36.5,
-    39.5
+    32.75,
+    35.55
    ],
    "kind": "video",
    "gen_sec": 4,
    "use": [
     0.3,
-    3.3
+    3.1
    ],
    "set": "cafe",
    "chars": [
@@ -452,13 +460,14 @@
    "still": "은서가 휴대폰을 가슴께로 내리며 참던 웃음이 번지는 순간.",
    "action": "0~2초 아랫입술을 살짝 깨물며 웃음을 참는다, 2~3.5초 창밖을 보며 환하게 웃는다.",
    "sfx": [],
-   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_190323148e4f4dd284b86f4c717c9994/output/output_0.png"
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_190323148e4f4dd284b86f4c717c9994/output/output_0.png",
+   "speed": 1.0
   },
   {
    "id": "S13b",
    "t": [
-    39.5,
-    45.3
+    35.55,
+    41.15
    ],
    "kind": "comp",
    "comp": "chat",
@@ -474,45 +483,45 @@
    ],
    "sfx": [
     [
-     40.8,
+     36.75,
      "click",
      0.5
     ],
     [
-     41.8,
+     37.75,
      "heart",
      0.8
     ],
     [
-     42.8,
+     38.75,
      "click",
      0.5
     ],
     [
-     43.8,
+     39.75,
      "pop",
      0.7
     ]
    ],
    "hold": [
-    1.3,
+    1.2,
     1.0,
     1.0,
     1.0,
-    1.5
+    1.4
    ]
   },
   {
    "id": "S14",
    "t": [
-    45.3,
-    49.3
+    41.15,
+    44.75
    ],
    "kind": "video",
    "gen_sec": 5,
    "use": [
     0.3,
-    4.3
+    3.9
    ],
    "set": "cafe",
    "chars": [
@@ -529,25 +538,26 @@
    "action": "0~1초 지호가 고개를 들이민다, 1~3초 지호가 말한다, 3~4초 은서가 놀라 휴대폰을 가슴에 붙인다. 은서는 말하지 않는다.",
    "sfx": [
     [
-     45.3,
+     41.15,
      "scratch",
      1.0
     ]
    ],
    "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_2cf79bb130414f90a55ef558e5abc986/output/output_0.png",
-   "note": "동생 지호, 6화 그 수험생"
+   "note": "동생 지호, 6화 그 수험생",
+   "speed": 1.0
   },
   {
    "id": "S15",
    "t": [
-    49.3,
-    52.0
+    44.75,
+    47.05
    ],
    "kind": "video",
    "gen_sec": 4,
    "use": [
     0.1,
-    2.8
+    2.4
    ],
    "set": "cafe",
    "chars": [
@@ -563,18 +573,19 @@
    "still": "은서가 지호 쪽으로 몸을 돌려 검지를 입술에 대는 순간.",
    "action": "0~1초 검지를 입술에 댄다, 1~2.5초 빠르게 속삭인다. 지호는 말하지 않고 씩 웃는다.",
    "sfx": [],
-   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_0aff5f80a1874caaa52b5c95849a233f/output/output_0.png"
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_0aff5f80a1874caaa52b5c95849a233f/output/output_0.png",
+   "speed": 1.0
   },
   {
    "id": "S16",
    "t": [
-    52.0,
-    56.0
+    47.05,
+    50.85
    ],
    "kind": "video",
    "gen_sec": 7,
    "use": [
-    0.8,
+    1.0,
     4.8
    ],
    "set": "cafe",
@@ -591,30 +602,31 @@
    "action": "0~2초 엽전을 튕겨 받는다, 2~5.5초 카메라를 보며 옅게 웃고 말한다.",
    "sfx": [
     [
-     52.05,
+     47.15,
      "coin",
      1.0
     ],
     [
-     55.3,
+     50.25,
      "chime",
      0.5
     ]
    ],
-   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_e8d97cce5d5d43f2b3e5db59bce311dd/output/output_0.png"
+   "still_url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_e8d97cce5d5d43f2b3e5db59bce311dd/output/output_0.png",
+   "speed": 1.0
   },
   {
    "id": "S17",
    "t": [
-    56.0,
-    59.0
+    50.85,
+    53.85
    ],
    "kind": "comp",
    "comp": "endcard",
    "caption": "7닢째, 그 사람과 잘될까 궁금할 땐, hongchaksa.kr",
    "sfx": [
     [
-     56.0,
+     50.85,
      "logo",
      1.0
     ]
@@ -634,73 +646,73 @@
  "music": [
   [
    0,
-   10.1,
+   9.7,
    "comedy",
    "F"
   ],
   [
-   10.1,
-   14.3,
+   9.7,
+   12.8,
    "theme",
    "F"
   ],
   [
-   14.3,
-   15.7,
+   12.8,
+   14.2,
    "stop",
    "F"
   ],
   [
-   15.7,
-   23.05,
+   14.2,
+   21.15,
    "comedy",
    "F"
   ],
   [
-   23.05,
-   23.5,
+   21.15,
+   21.6,
    "stop",
    "F"
   ],
   [
-   23.5,
-   24.1,
+   21.6,
+   22.2,
    "comedy",
    "F"
   ],
   [
-   24.1,
-   29.1,
+   22.2,
+   25.75,
    "theme",
    "F"
   ],
   [
-   29.1,
-   30.5,
+   25.75,
+   27.15,
    "stop",
    "F"
   ],
   [
-   30.5,
-   44.85,
+   27.15,
+   40.7,
    "romance",
    "F"
   ],
   [
-   44.85,
-   45.3,
+   40.7,
+   41.15,
    "stop",
    "F"
   ],
   [
-   45.3,
-   52.0,
+   41.15,
+   47.05,
    "comedy",
    "F"
   ],
   [
-   52.0,
-   59.0,
+   47.05,
+   53.85,
    "theme",
    "F"
   ]

@@ -9,6 +9,13 @@
   boom    반전 순간 낮게 '쿵'
   scratch 음악이 끊기는 '끽'
   bell    초인종 '띵동'
+  tick    초침 '똑'(카운트다운, 긴장)
+  rewind  테이프 되감기 '위이잉'(무르기, 시간 되돌리기)
+  riser   반전 직전 올라가는 긴장음(1.2초)
+  heart   심장 두 번 '두근'(설렘)
+  chime   풍경 소리(홍책사 등장)
+  coin    엽전 튕김, 회전, 착지
+  logo    홍책사 소리 상표(엽전 한 번, 풍경, 낮은 북). 매 편 끝 화면에 같은 소리
 
 mix(초, 출력 wav, music=음악 wav 경로, events=[(초, 이름, 크기)], cuts=[(시작, 끝)])
   cuts 구간에서는 음악을 끈다(웃음 직전 정적). 시작과 끝은 0.04초로 부드럽게.
@@ -114,7 +121,93 @@ def scratch(rng):
     return (y + tone) * _env(n, 0.002, 5) * 0.5
 
 
-FX = dict(click=click, pop=pop, ding=ding, bell=bell, whoosh=whoosh, thunk=thunk, boom=boom, scratch=scratch)
+def tick(rng):
+    n = int(0.06 * SR)
+    noise = rng.standard_normal(n)
+    hp = np.diff(noise, prepend=0)
+    t = _t(0.06)
+    tone = np.sin(2 * math.pi * 2400 * t) * 0.4
+    return (hp * 0.5 + tone) * _env(n, 0.0005, 120) * 0.35
+
+
+def rewind(rng):
+    n = int(0.9 * SR)
+    t = np.arange(n) / SR
+    f = 300 + 2200 * (t / t[-1]) ** 1.5
+    ph = 2 * math.pi * np.cumsum(f) / SR
+    warble = 0.6 + 0.4 * np.sin(2 * math.pi * 22 * t)
+    tone = np.sign(np.sin(ph)) * 0.25 + np.sin(ph * 0.5) * 0.35
+    noise = _lowpass(rng.standard_normal(n), 0.2) * 0.4
+    env = np.minimum(1, t / 0.05) * np.minimum(1, (t[-1] - t) / 0.08 + 0.01)
+    return np.tanh((tone * warble + noise) * env * 1.2) * 0.45
+
+
+def riser(rng):
+    n = int(1.2 * SR)
+    t = np.arange(n) / SR
+    pos = t / t[-1]
+    noise = rng.standard_normal(n)
+    y = _lowpass(noise, 0.01 + 0.4 * pos ** 2)
+    f = 200 + 900 * pos ** 2
+    tone = np.sin(2 * math.pi * np.cumsum(f) / SR) * 0.25
+    return (y * 0.6 + tone) * pos ** 2 * 0.55
+
+
+def heart(rng):
+    out = np.zeros(int(0.75 * SR))
+    for st, g in [(0.0, 1.0), (0.22, 0.75)]:
+        t = _t(0.25)
+        f = 70 * np.exp(-t * 12) + 45
+        s = np.sin(2 * math.pi * np.cumsum(f) / SR) * _env(len(t), 0.004, 16) * g
+        i = int(st * SR)
+        out[i:i + len(s)] += s[: len(out) - i]
+    return np.tanh(out * 1.8) * 0.6
+
+
+def chime(rng):
+    out = np.zeros(int(1.8 * SR))
+    for f, st in [(2093.0, 0.0), (2637.0, 0.12), (3136.0, 0.27), (2349.3, 0.45)]:
+        t = _t(1.3)
+        s = (np.sin(2 * math.pi * f * t) + 0.25 * np.sin(2 * math.pi * 2.4 * f * t) * np.exp(-t * 9)) * _env(len(t), 0.001, 3.5)
+        i = int(st * SR)
+        out[i:i + len(s)] += s[: len(out) - i]
+    return out * 0.16
+
+
+def coin(rng):
+    out = np.zeros(int(1.4 * SR))
+    t = _t(0.7)
+    ring = (np.sin(2 * math.pi * 3520 * t) + 0.5 * np.sin(2 * math.pi * 5274 * t) + 0.3 * np.sin(2 * math.pi * 7040 * t)) * _env(len(t), 0.0008, 6)
+    out[: len(ring)] += ring * 0.5
+    spin_t = _t(0.45)
+    spin = np.sin(2 * math.pi * 4200 * spin_t) * (0.5 + 0.5 * np.sin(2 * math.pi * 30 * spin_t)) * _env(len(spin_t), 0.01, 4) * 0.12
+    i = int(0.15 * SR)
+    out[i:i + len(spin)] += spin
+    land = thunk(rng) * 0.6
+    j = int(0.75 * SR)
+    out[j:j + len(land)] += land[: len(out) - j]
+    tail = np.sin(2 * math.pi * 3300 * _t(0.4)) * _env(int(0.4 * SR), 0.0008, 9) * 0.25
+    out[j:j + len(tail)] += tail[: len(out) - j]
+    return out * 0.6
+
+
+def logo(rng):
+    out = np.zeros(int(2.2 * SR))
+    c = coin(rng)[: int(0.7 * SR)]
+    out[: len(c)] += c
+    ch = chime(rng) * 0.9
+    i = int(0.35 * SR)
+    out[i:i + len(ch)] += ch[: len(out) - i]
+    t = _t(1.2)
+    f = 98 * np.exp(-t * 1.2) + 55
+    drum = np.sin(2 * math.pi * np.cumsum(f) / SR) * _env(len(t), 0.003, 3.5) * 0.5
+    j = int(0.95 * SR)
+    out[j:j + len(drum)] += drum[: len(out) - j]
+    return np.tanh(out * 1.3) * 0.7
+
+
+FX = dict(click=click, pop=pop, ding=ding, bell=bell, whoosh=whoosh, thunk=thunk, boom=boom, scratch=scratch,
+          tick=tick, rewind=rewind, riser=riser, heart=heart, chime=chime, coin=coin, logo=logo)
 
 
 def read_wav(path):

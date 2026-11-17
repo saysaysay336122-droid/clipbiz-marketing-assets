@@ -734,7 +734,77 @@ def magnet():
     x += _bp(_rng.standard_normal(len(t)), 2000, 8000) * (t / sec) ** 2 * 0.2
     return _norm(_verb(_pan(x, 0, 0.6), "room", 0.2), 0.8)
 
-CINE = dict(hit=hit, hitd=hitd, freeze=freeze, subdrop=subdrop, boom=boom, suck=suck, rise1=rise1, rise2=rise2,
+
+def tape():
+    """덕트 테이프 찍 뜯어 감는 소리: 빠른 크래클 연타와 끈적한 떨어짐(9화 어깨 상자)."""
+    sec = 0.42
+    n = int(sec * SR)
+    x = np.zeros(n)
+    t = 0.0
+    while t < 0.3:
+        j = int(t * SR)
+        c = _crack(0.006, 1500, 8000, 500) * (0.5 + 0.5 * _rng.random())
+        x[j:j + len(c)] += c[: n - j]
+        t += 0.004 + 0.006 * _rng.random()
+    x *= np.linspace(0.6, 1.0, n) * _env(n, 0.005, 5)
+    x += _bp(_rng.standard_normal(n), 300, 1200) * _env(n, 0.01, 10) * 0.25
+    return _norm(_widen(_verb(_pan(x, -0.1, 0.4), "room", 0.15)), 0.85)
+
+
+def keys():
+    """거인 키보드 팔이 내는 그르렁: 키캡 수십 개가 덜그럭거리는 연타와 낮은 모터음(9화 거인 얼굴)."""
+    sec = 1.1
+    n = int(sec * SR)
+    x = np.zeros(n)
+    t = 0.0
+    while t < 0.95:
+        j = int(t * SR)
+        c = _bp(_rng.standard_normal(int(0.012 * SR)), 1800, 6500) * _env(int(0.012 * SR), 0.001, 300) * (0.4 + 0.6 * _rng.random())
+        x[j:j + len(c)] += c[: n - j]
+        t += 0.012 + 0.03 * _rng.random()
+    motor = np.sin(2 * math.pi * 58 * _t(sec)) * 0.35 + np.sin(2 * math.pi * 116 * _t(sec)) * 0.15
+    motor *= (0.6 + 0.4 * np.sin(2 * math.pi * 7 * _t(sec)))
+    x = x + motor * np.minimum(1, np.linspace(0, 4, n)) * _env(n, 0.05, 1.5)
+    return _norm(_glue(_verb(_pan(x, 0, 0.6), "hall", 0.25), -18, 3), 0.9)
+
+
+def buzz():
+    """충격에 형광등이 파르르 깜빡이는 소리: 120Hz 윙과 끊김 세 번."""
+    sec = 0.5
+    n = int(sec * SR)
+    b = (np.sign(np.sin(2 * math.pi * 120 * _t(sec))) * 0.3 + np.sin(2 * math.pi * 240 * _t(sec)) * 0.2)
+    gate = np.ones(n)
+    for a0, a1 in ((0.06, 0.1), (0.16, 0.19), (0.27, 0.33)):
+        gate[int(a0 * SR):int(a1 * SR)] = 0.1
+    x = _bp(b * gate, 150, 4000) * _env(n, 0.003, 4)
+    return _norm(_pan(x, 0.2, 0.3), 0.6)
+
+
+def wang():
+    """쟁반 방패가 맞을 때의 금속 울림: 높은 부분음이 어긋나며 길게 남는 쟁반 소리."""
+    sec = 1.4
+    x = np.zeros(int(sec * SR))
+    for f, a, d in ((523, 0.5, 3.2), (1187, 0.35, 4.5), (1931, 0.25, 6), (2850, 0.18, 8), (3710, 0.12, 10)):
+        x += np.sin(2 * math.pi * f * (1 + 0.002 * np.sin(2 * math.pi * 5 * _t(sec))) * _t(sec)) * a * _env(len(x), 0.001, d)
+    x[: int(0.01 * SR)] += _crack(0.01, 2000, 9000, 300)[: int(0.01 * SR)]
+    return _norm(_widen(_verb(_pan(x, 0, 0.4), "room", 0.2)), 0.85)
+
+
+def bootdn():
+    """거인 전원 꺼짐: 사무용 컴퓨터 종료음처럼 내려가는 네 음과 낮게 꺼지는 웅(9화 거인 꺼짐, 부팅음과 짝)."""
+    sec = 1.2
+    x = np.zeros(int(sec * SR))
+    for k, f in enumerate([1568.0, 1318.5, 1046.5, 784.0]):
+        at = k * 0.09
+        s = np.sin(2 * math.pi * f * _t(0.5)) * _env(int(0.5 * SR), 0.002, 8) * 0.4
+        j = int(at * SR)
+        x[j:j + len(s)] += s[: len(x) - j]
+    hum = np.sin(2 * math.pi * np.cumsum(np.linspace(120, 40, int(0.8 * SR))) / SR) * _env(int(0.8 * SR), 0.01, 3) * 0.35
+    j = int(0.36 * SR)
+    x[j:j + len(hum)] += hum[: len(x) - j]
+    return _norm(_widen(_verb(_pan(x, 0, 0.5), "room", 0.2)), 0.8)
+
+CINE = dict(bootdn=bootdn, tape=tape, keys=keys, buzz=buzz, wang=wang, hit=hit, hitd=hitd, freeze=freeze, subdrop=subdrop, boom=boom, suck=suck, rise1=rise1, rise2=rise2,
             revcym=revcym, braam=braam, bigbell=bigbell, ring=ring, tickh=tickh, timp=timp, stamp=stamp, kachunk=kachunk,
             glitch=glitch, stutter=stutter, lockon=lockon, alarm=alarm, swishr=swishr, swishl=swishl, passr=passr,
             gust=gust, paper=paper, roll=roll, coinx=coinx, heartx=heartx, shimmer=shimmer, drum=drum,

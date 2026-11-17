@@ -1,0 +1,150 @@
+{
+ "office": {
+  "job": "mcp_16c817442bd9418a8fad8bdd69aea44a",
+  "cost": 75
+ },
+ "coin": {
+  "job": "mcp_5dabf3348afb4cfb847faf57b6253dcb",
+  "cost": 75
+ },
+ "S1": {
+  "job": "mcp_dfa644d985954fbb9f380d74bb83aae6",
+  "cost": 75
+ },
+ "S3": {
+  "job": "mcp_f24ccf74417840abac71992f9fd34426",
+  "cost": 75
+ },
+ "S4": {
+  "job": "mcp_bdd93e5371104132a9bb310211fa35e8",
+  "cost": 75
+ },
+ "S5": {
+  "job": "mcp_221694db2cc5429893704a62872225cb",
+  "cost": 75
+ },
+ "S7": {
+  "job": "mcp_50481534a1cb4deaa63ca054a730998f",
+  "cost": 75
+ },
+ "S8": {
+  "job": "mcp_b9a2da6c9370472192eca0db8b4a5f9c",
+  "cost": 75
+ },
+ "S10": {
+  "job": "mcp_8e8cab32ab944644b61b9cc232a18d0c",
+  "cost": 75
+ },
+ "S11": {
+  "job": "mcp_eb95a0b131cc478ab3079b2f2d99dfe1",
+  "cost": 75
+ },
+ "S12": {
+  "job": "mcp_4eca445fa56845e6971de9652de49e97",
+  "cost": 75
+ },
+ "S13": {
+  "job": "mcp_c94c9f2a8f064ce1a9194531dd1c3730",
+  "cost": 75
+ },
+ "S13a": {
+  "job": "mcp_c4ed4aa3a7ee4bdfb0b2f49770e47fc7",
+  "cost": 75
+ },
+ "S13b": {
+  "job": "mcp_856dd13121a3401aa6e4adaf965a91f8",
+  "cost": 75
+ },
+ "S14": {
+  "job": "mcp_f7322eb1ee4d4fde8b2c5068ebc94890",
+  "cost": 75
+ },
+ "S14b": {
+  "job": "mcp_afd5d83c91654eca9b65b372bba73fdf",
+  "cost": 75
+ },
+ "S15": {
+  "job": "mcp_e06f3b810a02452a980e2b96f0d82219",
+  "cost": 75
+ },
+ "S16": {
+  "job": "mcp_6e225423bb984beea43dfdd6df0bd819",
+  "cost": 75
+ },
+ "S17": {
+  "job": "mcp_a8547967e6fe4ec6a1ed6396b476027c",
+  "cost": 75
+ },
+ "S18v": {
+  "job": "mcp_c24631e2860448db96a91f7b7ecea817",
+  "cost": 75
+ },
+ "S19": {
+  "job": "mcp_c9c3e2e16f8d42d793b28c09486907b8",
+  "cost": 75
+ },
+ "S8_r2": {
+  "job": "mcp_a0998c3a6d21450995b447077c87d028",
+  "cost": 75
+ },
+ "S10_r2": {
+  "job": "mcp_3995df22e1f04cb9a250dcb37240ce6e",
+  "cost": 75
+ },
+ "V_S11": {
+  "job": "mcp_cc3d4e1ff07e43f0b33071f51e75d404",
+  "cost": 300
+ },
+ "V_S13": {
+  "job": "mcp_cb586616096f42129f5816286e5ecad5",
+  "cost": 300
+ },
+ "V_S18v": {
+  "job": "mcp_0a3db1f16aca42f1929db4a5fcf162b3",
+  "cost": 300
+ },
+ "V_S3": {
+  "job": "mcp_52edcc0988ee4369ada1dc05d8215bc3",
+  "cost": 300
+ },
+ "V_S4": {
+  "job": "mcp_6ccff18a79864d54a79aacb94a4a284a",
+  "cost": 300
+ },
+ "V_S5": {
+  "job": "mcp_2b43e91a8bef489c9eb017b1766486dd",
+  "cost": 300
+ },
+ "V_S7": {
+  "job": "mcp_e49be190f83e4f7585c0d6d1654355ac",
+  "cost": 300
+ },
+ "V_S8": {
+  "job": "mcp_dc324f38e2e64e31810a93f7208edf8b",
+  "cost": 300
+ },
+ "V_S10": {
+  "job": "mcp_7accd135664f40dea219c2fb0190f07b",
+  "cost": 375
+ },
+ "V_S12": {
+  "job": "mcp_0f43325eb05f4853a837fefd9122a570",
+  "cost": 300
+ },
+ "V_S14": {
+  "job": "mcp_0a1fd8766e0a4a7a8e099c5e035ab4a8",
+  "cost": 300
+ },
+ "V_S15": {
+  "job": "mcp_5f2d038f8b924896a7b063a6002c9ae0",
+  "cost": 300
+ },
+ "V_S16": {
+  "job": "mcp_c90a740ce4704ac4962b5dcf90786c3a",
+  "cost": 300
+ },
+ "V_S17": {
+  "job": "mcp_649a3a33c0124f05a4ff288ebee85de4",
+  "cost": 375
+ }
+}

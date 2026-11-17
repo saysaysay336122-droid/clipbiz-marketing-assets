@@ -40,6 +40,8 @@
   heartx    심장 두 번, 초저음
   shimmer   풍경과 별가루(홍책사 등장, 정지 세계)
   drum      큰 북 한 번
+  clank     슈트 부품 철컥(9화)   bootup  헤드셋 부팅음   groan  거인 금속 신음   splash  정수기 물 터짐
+  plink     물방울 톡   baduk  바둑돌 딱과 긴 여운(급소 보기)   cascade  모니터 연쇄 착지   mail  메일 알림   magnet  자석 웅
   tapestop, tapestart, scratch, rewind, logo 등은 sfx.py 소리를 48kHz 스테레오로 옮겨 쓴다(소리 상표 logo는 매 편 같게).
 
 ambience(초) 사무실 공기음: 공조기 바람, 아주 작은 자판 소리, 먼 웅성임 없음(대사 가림 방지)
@@ -620,10 +622,123 @@ def drum():
     return _norm(_glue(_verb(_pan(x, 0, 0.4), "hall", 0.45), -18, 3), 0.9)
 
 
+
+def clank():
+    """슈트 부품이 붙는 철컥: 짧은 금속 클램프, 공기압 칙, 작은 방 울림(9화 조립 몽타주)."""
+    n = int(0.6 * SR)
+    hiss = _bp(_rng.standard_normal(int(0.12 * SR)), 2500, 9000) * _env(int(0.12 * SR), 0.002, 22) * 0.35
+    core = _place(n, (0, _crack(0.012, 1800, 7000, 260) * 0.9), (0.004, _anvil(0.35, 620, 14) * 0.55),
+                  (0.004, _drum_body(140, 90, 0.18, 22) * 0.6), (0.02, hiss))
+    st = _verb(_pan(core, 0, 0.4), "room", 0.22)
+    return _norm(_widen(_glue(st, -16, 3)), 0.9)
+
+
+def bootup():
+    """헤드셋 부팅음: 짧게 올라가는 디지털 세 음과 맑은 확정음(조립 네 번째, 박자를 깨는 변주)."""
+    sec = 0.9
+    x = np.zeros(int(sec * SR))
+    for k, f in enumerate([1046.5, 1318.5, 1568.0, 2093.0]):
+        at = k * 0.07
+        s = np.sin(2 * math.pi * f * _t(0.5)) * _env(int(0.5 * SR), 0.002, 9 if k < 3 else 4) * (0.35 if k < 3 else 0.5)
+        j = int(at * SR)
+        x[j:j + len(s)] += s[: len(x) - j]
+    return _norm(_widen(_verb(_pan(x, 0, 0.5), "room", 0.2)), 0.8)
+
+
+def groan():
+    """거인의 금속성 신음: 낮은 톱니파 하강, 철판 삐걱, 홀 잔향 2.2초."""
+    sec = 2.2
+    t = _t(sec)
+    f = 70 * np.exp(-t * 0.25)
+    ph = 2 * math.pi * np.cumsum(f) / SR
+    saw = (2 * ((ph / (2 * math.pi)) % 1) - 1) * np.minimum(1, t / 0.25) * np.exp(-t * 0.6)
+    creak = _bp(_rng.standard_normal(len(t)), 300, 1400) * (0.5 + 0.5 * np.sin(2 * math.pi * 7 * t)) * 0.25 * np.exp(-t * 0.8)
+    x = np.tanh((_lp(saw, 900) * 1.2 + creak) * 1.6)
+    return _norm(_glue(_verb(_pan(x, 0, 0.7), "hall", 0.35), -18, 3), 0.9)
+
+
+def splash():
+    """정수기 물이 터져 쏟아지는 소리 1.2초: 잡음 띠 여러 개와 물방울 틱."""
+    sec = 1.2
+    t = _t(sec)
+    body = _bp(_rng.standard_normal(len(t)), 400, 6000) * np.minimum(1, t / 0.02) * np.exp(-t * 2.4)
+    drops = np.zeros(len(t))
+    for k in range(40):
+        at = 0.05 + _rng.random() * 1.0
+        f = 1500 + _rng.random() * 2500
+        s = np.sin(2 * math.pi * f * _t(0.04) * (1 + 3 * _t(0.04))) * _env(int(0.04 * SR), 0.001, 60) * 0.25
+        j = int(at * SR)
+        drops[j:j + len(s)] += s[: len(drops) - j]
+    return _norm(_verb(_pan(body * 0.8 + drops, 0, 0.8), "room", 0.25), 0.85)
+
+
+def plink():
+    """멈춘 물방울을 손끝으로 톡: 높은 유리 방울 소리와 긴 반짝 꼬리."""
+    sec = 1.6
+    x = np.zeros(int(sec * SR))
+    for f, a, d in [(3135.96, 0.5, 7), (4186.0, 0.3, 9), (6271.9, 0.15, 12)]:
+        x += np.sin(2 * math.pi * f * _t(sec)) * _env(len(x), 0.001, d) * a
+    return _norm(_widen(_verb(_pan(x, 0.1, 0.4), "cathedral", 0.4)), 0.7)
+
+
+def baduk():
+    """바둑돌을 판에 딱: 단단한 나무 판 순간음(1.4kHz 공명), 성당 잔향, 낮은 웅 하는 여운(급소 보기)."""
+    sec = 2.6
+    t = _t(sec)
+    tap = _bp(_rng.standard_normal(int(0.01 * SR)), 900, 6000) * 1.2
+    wood = np.sin(2 * math.pi * 1400 * _t(0.25)) * _env(int(0.25 * SR), 0.0005, 30) * 0.6
+    wood += np.sin(2 * math.pi * 620 * _t(0.25)) * _env(int(0.25 * SR), 0.0005, 24) * 0.4
+    hum = (np.sin(2 * math.pi * 98 * t) + 0.4 * np.sin(2 * math.pi * 147 * t)) * np.minimum(1, t / 0.4) * np.exp(-t * 0.9) * 0.35
+    x = _place(len(t), (0, tap), (0, wood), (0.05, hum))
+    return _norm(_widen(_glue(_verb(_pan(x, 0, 0.5), "cathedral", 0.45), -18, 2.5)), 0.9)
+
+
+def cascade():
+    """모니터들이 제자리로 연달아 착지: 딸깍 열두 번이 점점 빨라지고 마지막 묵직한 한 번(역조립)."""
+    sec = 2.4
+    x = np.zeros(int(sec * SR))
+    at = 0.0
+    gap = 0.22
+    for k in range(12):
+        s = _crack(0.01, 1200, 6000, 300) * 0.6
+        b = _drum_body(160 - k * 4, 110, 0.12, 30) * 0.4
+        j = int(at * SR)
+        x[j:j + len(s)] += s[: len(x) - j]
+        x[j:j + len(b)] += b[: len(x) - j]
+        at += gap
+        gap *= 0.84
+    last = _drum_body(90, 50, 0.6, 6) * 0.9
+    j = int(min(at + 0.08, sec - 0.7) * SR)
+    x[j:j + len(last)] += last[: len(x) - j]
+    return _norm(_widen(_verb(_pan(x, 0, 0.7), "room", 0.25)), 0.9)
+
+
+def mail():
+    """메일 알림 띠링 두 음(안건이 52로 뛰는 순간)."""
+    sec = 0.8
+    x = np.zeros(int(sec * SR))
+    for at, f in [(0, 1760.0), (0.11, 2349.3)]:
+        s = np.sin(2 * math.pi * f * _t(0.6)) * _env(int(0.6 * SR), 0.002, 6) * 0.5
+        j = int(at * SR)
+        x[j:j + len(s)] += s[: len(x) - j]
+    return _norm(_verb(_pan(x, 0, 0.3), "room", 0.15), 0.75)
+
+
+def magnet():
+    """탕비실 물건이 끌려 날아오르는 자석 웅 소리 0.8초(끝이 올라감)."""
+    sec = 0.8
+    t = _t(sec)
+    f = 80 + 300 * (t / sec) ** 2
+    ph = 2 * math.pi * np.cumsum(f) / SR
+    x = (np.sin(ph) + 0.3 * np.sin(2 * ph)) * np.minimum(1, t / 0.1) * 0.5
+    x += _bp(_rng.standard_normal(len(t)), 2000, 8000) * (t / sec) ** 2 * 0.2
+    return _norm(_verb(_pan(x, 0, 0.6), "room", 0.2), 0.8)
+
 CINE = dict(hit=hit, hitd=hitd, freeze=freeze, subdrop=subdrop, boom=boom, suck=suck, rise1=rise1, rise2=rise2,
             revcym=revcym, braam=braam, bigbell=bigbell, ring=ring, tickh=tickh, timp=timp, stamp=stamp, kachunk=kachunk,
             glitch=glitch, stutter=stutter, lockon=lockon, alarm=alarm, swishr=swishr, swishl=swishl, passr=passr,
-            gust=gust, paper=paper, roll=roll, coinx=coinx, heartx=heartx, shimmer=shimmer, drum=drum)
+            gust=gust, paper=paper, roll=roll, coinx=coinx, heartx=heartx, shimmer=shimmer, drum=drum,
+            clank=clank, bootup=bootup, groan=groan, splash=splash, plink=plink, baduk=baduk, cascade=cascade, mail=mail, magnet=magnet)
 _CACHE = {}
 
 
@@ -666,7 +781,7 @@ def read_st(path):
     return d
 
 
-BIG = ("hit", "hitd", "freeze", "bigbell", "braam", "timp", "stamp", "boom", "kachunk")
+BIG = ("hit", "hitd", "freeze", "bigbell", "braam", "timp", "stamp", "boom", "kachunk", "baduk", "groan")
 
 
 def mix(seconds, out, music=None, music_gain=0.55, events=(), cuts=(), duck=(), duck_db=8.0, silence=(), bed=(), sfx_gain=1.0, fx_duck_db=7.0):

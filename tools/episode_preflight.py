@@ -51,7 +51,7 @@ def build_prompts(spec):
     for sh in spec["shots"]:
         if sh["kind"] == "still":
             people = " ".join(ch[c]["fixed"] for c in sh.get("chars", []))
-            refs = [ch[c]["face"] for c in sh.get("chars", [])] + [f"[장소 {sh['set']} 기준 사진]"]
+            refs = [ch[c]["face"] for c in sh.get("chars", [])] + [f"[장소 {sh['set']} 기준 사진]"] + sh.get("refs_extra", [])
             still = f"9:16 세로. {sh['framing']} {people} 장소: {sets[sh['set']]['desc']} 순간: {sh['still']} {still_suffix}"
             out.append(dict(id=sh["id"], refs=refs, still=still, video=None, sec=0, audio=False,
                             still_url=sh.get("still_url"), still_only=True))
@@ -59,7 +59,7 @@ def build_prompts(spec):
         if sh["kind"] != "video" or sh.get("reuse"):
             continue
         people = " ".join(ch[c]["fixed"] for c in sh["chars"])
-        refs = [ch[c]["face"] for c in sh["chars"]] + [f"[장소 {sh['set']} 기준 사진]"]
+        refs = [ch[c]["face"] for c in sh["chars"]] + [f"[장소 {sh['set']} 기준 사진]"] + sh.get("refs_extra", [])
         still = f"9:16 세로. {sh['framing']} {people} 장소: {sets[sh['set']]['desc']} 순간: {sh['still']} {still_suffix}"
         if sh.get("line"):
             sp = ch[sh["speaker"]]

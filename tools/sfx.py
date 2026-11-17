@@ -206,8 +206,26 @@ def logo(rng):
     return np.tanh(out * 1.3) * 0.7
 
 
+def tapestop(rng):
+    """시간이 멈출 때: 음높이가 뚝 떨어지며 꺼지는 테이프 정지 느낌."""
+    n = int(0.75 * SR)
+    t = np.arange(n) / SR
+    pos = t / t[-1]
+    f = 260 * (1 - pos) ** 2.2 + 18
+    ph = 2 * math.pi * np.cumsum(f) / SR
+    saw = 2 * ((ph / (2 * math.pi)) % 1.0) - 1
+    y = _lowpass(saw * 0.6 + np.sin(ph) * 0.5, 0.08)
+    return y * (1 - pos) ** 1.4 * 0.7
+
+
+def tapestart(rng):
+    """시간이 돌아올 때: 테이프가 다시 감기며 음높이가 올라오는 느낌."""
+    return tapestop(rng)[::-1].copy() * 0.85
+
+
 FX = dict(click=click, pop=pop, ding=ding, bell=bell, whoosh=whoosh, thunk=thunk, boom=boom, scratch=scratch,
-          tick=tick, rewind=rewind, riser=riser, heart=heart, chime=chime, coin=coin, logo=logo)
+          tick=tick, rewind=rewind, riser=riser, heart=heart, chime=chime, coin=coin, logo=logo,
+          tapestop=tapestop, tapestart=tapestart)
 
 
 def read_wav(path):

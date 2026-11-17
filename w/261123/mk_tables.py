@@ -1,7 +1,7 @@
 import json,re,sys
-s=json.load(open("ep08_spec_v3.json",encoding="utf-8"))
-K={"tick":"초침","thunk":"쿵","whoosh":"휙","scratch":"레코드 긁힘","rewind":"되감기","chime":"풍경","coin":"엽전","riser":"상승음","boom":"낮은 충격음","pop":"뽁","click":"딸깍","bell":"종","logo":"소리 상표","ding":"딩","heart":"두근","bell":"종"}
-short={"S0":"시간이 멈춘 사무실 앞 도윤의 놀란 얼굴, 허공의 종이와 멈춘 커피 줄기(S12 시작 사진 재사용)",
+s=json.load(open("ep08_spec_v5.json",encoding="utf-8"))
+K={"tick":"초침","thunk":"쿵","whoosh":"휙","scratch":"레코드 긁힘","rewind":"되감기","chime":"풍경","coin":"엽전","riser":"상승음","boom":"낮은 충격음","pop":"뽁","click":"딸깍","bell":"종","logo":"소리 상표","ding":"딩","heart":"두근","bell":"종","tapestop":"테이프 정지","tapestart":"테이프 재생"}
+short={"S0":"불릿타임 영상 일부: 멈춘 사무실 가운데 도윤, 카메라만 돈다(S11 재사용), 0.3초에 도윤 목소리 '뭐야, 이거.'","S20":"홍책사 클로즈업, 엽전을 튕겨 받는다(7화 고정 멘트 컷 재사용)",
 "S2":"S3 시작 사진 정지, 이름 카드와 디지털 시계 17:59",
 "S6":"S4 마지막 프레임 정지, 빨간 도장 '작전 실패 1', 3배속 되감기",
 "S9":"S7 칸막이 위로 눈만 내민 프레임 정지, 빨간 도장 '작전 실패 2'",
@@ -14,9 +14,11 @@ for x in s["shots"]:
     pic=pic.replace(" 동료는 실존 인물을 닮지 않은 평범한 얼굴.","").replace(" 동료들은 실존 인물을 닮지 않은 평범한 얼굴.","")
     line=""
     if x.get("line"): line=f"{s['characters'][x['speaker']]['name']}: {x['line']}"
+    if x["id"]=="S20": line="홍책사: 홍책사 한 수면, 됐지?"
     cap=x.get("caption","")
     if x.get("tag"): cap=f"이름표 '{x['tag']}', {cap}"
     if x.get("sub"): cap=f"{cap}, 작은 자막 '{x['sub']}'"
+    if x.get("hud"): cap=(cap+", " if cap else "")+"HUD: "+x["hud"]
     snd=", ".join(f"{K.get(n,n)} {t:g}" for t,n,g in x.get("sfx",[]))
     cam=" ".join(v for v in [x.get("camera",""),x.get("fx","")] if v)
     rows.append(f"| {a:g}~{b:g} | {x['id']} {kind} | {pic} | {line} | {cap} | {snd} | {cam} |")

@@ -49,6 +49,13 @@ def build_prompts(spec):
     for k, s in sets.items():
         set_prompts[k] = f"9:16 세로, 사람 없는 빈 장소 기준 사진. {s['desc']} {still_suffix}"
     for sh in spec["shots"]:
+        if sh["kind"] == "still":
+            people = " ".join(ch[c]["fixed"] for c in sh.get("chars", []))
+            refs = [ch[c]["face"] for c in sh.get("chars", [])] + [f"[장소 {sh['set']} 기준 사진]"]
+            still = f"9:16 세로. {sh['framing']} {people} 장소: {sets[sh['set']]['desc']} 순간: {sh['still']} {still_suffix}"
+            out.append(dict(id=sh["id"], refs=refs, still=still, video=None, sec=0, audio=False,
+                            still_url=sh.get("still_url"), still_only=True))
+            continue
         if sh["kind"] != "video" or sh.get("reuse"):
             continue
         people = " ".join(ch[c]["fixed"] for c in sh["chars"])
@@ -87,7 +94,7 @@ def check(spec):
     for sh in shots:
         a, b = sh["t"]
         dur = b - a
-        texts = [sh.get("line", ""), sh.get("caption", ""), sh.get("note", ""), sh.get("chat_title", "")] + [m for m in sh.get("chat", [])]
+        texts = [sh.get("line", ""), sh.get("caption", ""), sh.get("sub", ""), sh.get("tag", ""), sh.get("note", ""), sh.get("chat_title", "")] + [m for m in sh.get("chat", [])]
         texts += sh.get("coins", [])
         for tx in texts:
             for c in BANNED_CHARS:
@@ -103,6 +110,11 @@ def check(spec):
         for at, name, g in sh.get("sfx", []):
             if first_sound is None or at < first_sound:
                 first_sound = at
+        if sh["kind"] == "still":
+            if not sh.get("still") or not sh.get("set"):
+                errs.append(f"{sh['id']}: 사진 전용 샷에 시작 사진 설명이나 장소 없음")
+            if sh.get("line"):
+                errs.append(f"{sh['id']}: 사진 전용 샷에는 대사를 넣을 수 없음")
         if sh["kind"] == "video":
             src = ids.get(sh["reuse"]) if sh.get("reuse") else sh
             if sh.get("reuse") and src is None:
@@ -141,7 +153,8 @@ def check(spec):
 def estimate(spec, video_prompts):
     stills = sum(PRICE[s.get("model", "nano-banana-pro")] for s in spec["sets"].values() if not s.get("url"))
     stills += 75 * sum(1 for p in video_prompts if not p.get("still_url"))
-    vids = sum(p["sec"] for p in video_prompts) * VIDEO_PER_SEC
+    stills += sum(PRICE[p.get("model", "nano-banana-pro")] for p in spec.get("props", {}).values() if not p.get("url"))
+    vids = sum(p["sec"] for p in video_prompts if not p.get("still_only")) * VIDEO_PER_SEC
     reserve = round((stills + vids) * spec.get("reserve_ratio", 0.25))
     return stills, vids, reserve
 
@@ -159,9 +172,16 @@ def main():
     lines.append("## 장소 기준 사진")
     for k, p in set_p.items():
         lines += [f"{k} ({spec['sets'][k].get('model', 'nano-banana-pro')}): {p}", ""]
+    if spec.get("props"):
+        lines.append("## 합성용 소품 사진")
+        for k, p in spec["props"].items():
+            lines += [f"{k} ({p.get('model', 'nano-banana-pro')}): 9:16 세로. {p['desc']} 실사 제품 사진, 화면에 글자와 로고 없음.", ""]
     lines.append(f"## 샷별 지시문 (부정 지시 공통: {neg})")
     model = spec.get("video_model", "bytedance/seedance-2.0")
     for p in vp:
+        if p.get("still_only"):
+            lines += [f"### {p['id']} 사진 전용(편집 효과용)", f"참고 이미지: {', '.join(p['refs'])}", f"사진: {p['still']}", ""]
+            continue
         lines += [f"### {p['id']} 영상 {p['sec']}초, 오디오 {'켬' if p['audio'] else '끔'}",
                   f"참고 이미지: {', '.join(p['refs'])}", f"시작 사진: {p.get('still_url') or '(아직 없음) ' + p['still']}", f"영상: {p['video']}"]
         if p.get("still_url"):

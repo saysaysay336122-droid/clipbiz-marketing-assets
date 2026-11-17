@@ -1,0 +1,184 @@
+{
+ "office_m": {
+  "job": "mcp_137815ccd8694e60b5ef03fdc654ea8b",
+  "cost": 75
+ },
+ "giant": {
+  "job": "mcp_744ea3f500244e109fdb516bd79d30cc",
+  "cost": 75
+ },
+ "suit": {
+  "job": "mcp_6cc8f35b830c43e5b09baa090aee7926",
+  "cost": 75
+ },
+ "S3": {
+  "job": "mcp_7d73d87bac0e452f81a3994214358a5c",
+  "cost": 75
+ },
+ "S24": {
+  "job": "mcp_160c86063cfb434caa9bdfb867c623ef",
+  "cost": 75
+ },
+ "S1h": {
+  "job": "mcp_e123e3dff5b347508f887f93a907edbd",
+  "kind": "still",
+  "credits": 75
+ },
+ "S1": {
+  "job": "mcp_eac89755d99d49d0a6fc24b6a5989d54",
+  "kind": "still",
+  "credits": 75
+ },
+ "S0b": {
+  "job": "mcp_d65904e73f9e4f09ae97bd856997ecd0",
+  "kind": "still",
+  "credits": 75
+ },
+ "S4a": {
+  "job": "mcp_fc1fb97819424cfcba2a1a51bd458b55",
+  "kind": "still",
+  "credits": 75
+ },
+ "S4b": {
+  "job": "mcp_86c2f0e229e243ec95a6de1de301af7f",
+  "kind": "still",
+  "credits": 75
+ },
+ "S4c": {
+  "job": "mcp_0446769a5d794661a0b864d0f2b863be",
+  "kind": "still",
+  "credits": 75
+ },
+ "S4d": {
+  "job": "mcp_7584e65fd05e43ad9c887a1abf83091e",
+  "kind": "still",
+  "credits": 75
+ },
+ "S6": {
+  "job": "mcp_bc0941f4f7204853864404193d37cc77",
+  "kind": "still",
+  "credits": 75
+ },
+ "S7": {
+  "job": "mcp_7ae17b9c83d7492f91e694428520bcea",
+  "kind": "still",
+  "credits": 75
+ },
+ "S14": {
+  "job": "mcp_dfbb382fbdfd429cb1dacd45f4830fba",
+  "kind": "still",
+  "credits": 75
+ },
+ "S15": {
+  "job": "mcp_a6562ecd99ad406d8de6fb1125b47532",
+  "kind": "still",
+  "credits": 75
+ },
+ "S17": {
+  "job": "mcp_0fa4743b40d443b29b696ea1eab469f3",
+  "kind": "still",
+  "credits": 75
+ },
+ "S19": {
+  "job": "mcp_ab362b8d70424fc49f074adb04f004f2",
+  "kind": "still",
+  "credits": 75
+ },
+ "S20": {
+  "job": "mcp_9ef8106d8cb74993af4a1a104892e05a",
+  "kind": "still",
+  "credits": 75
+ },
+ "S21": {
+  "job": "mcp_274be561a7924481a47e0afc5bcfaca4",
+  "kind": "still",
+  "credits": 75
+ },
+ "S23": {
+  "job": "mcp_ba9655e3ba4547cda12c609508dd6da4",
+  "kind": "still",
+  "credits": 75
+ },
+ "S25": {
+  "job": "mcp_95c1b6778f3e42db8c33c6359550396f",
+  "kind": "still",
+  "credits": 75
+ },
+ "S26": {
+  "job": "mcp_0fedff1515844eae841538cc620fe5ff",
+  "kind": "still",
+  "credits": 75
+ },
+ "S5_rejected": {
+  "job": "mcp_e2bef17b0848401b9e263a87424372cf",
+  "kind": "still",
+  "credits": 75,
+  "note": "누운 듯 기울어진 구도, 다시 만듦"
+ },
+ "S5": {
+  "job": "mcp_3d01c2d80b2e4702857287bf9f75320e",
+  "kind": "still",
+  "credits": 75
+ },
+ "V_S0b": {
+  "job": "mcp_7b19f63cbba4434a8fde9d358413c702",
+  "kind": "video",
+  "credits": 300
+ },
+ "V_S1": {
+  "job": "mcp_c5b5f823e9954225b0943e6eb14636a6",
+  "kind": "video",
+  "credits": 300
+ },
+ "V_S5": {
+  "job": "mcp_a84cbe139b9f4bcfa3190e3fbe5d3314",
+  "kind": "video",
+  "credits": 300
+ },
+ "V_S6": {
+  "job": "mcp_53f0d2e6d41846cca46f5c2d947fd294",
+  "kind": "video",
+  "credits": 300
+ },
+ "V_S7": {
+  "job": "mcp_8c575fd6338645208dfd682087369a64",
+  "kind": "video",
+  "credits": 300
+ },
+ "V_S14": {
+  "job": "mcp_a0ebe738658d46f1886b7bf82290b06e",
+  "kind": "video",
+  "credits": 300
+ },
+ "V_S15": {
+  "job": "mcp_d9ee0d99699e4dfeb488d38c0e51fff2",
+  "kind": "video",
+  "credits": 375
+ },
+ "V_S19": {
+  "job": "mcp_05cd88325c4e4271af8304d41bcd0de6",
+  "kind": "video",
+  "credits": 300
+ },
+ "V_S20": {
+  "job": "mcp_9b815e5dfb9841cc971511497ee9c080",
+  "kind": "video",
+  "credits": 375
+ },
+ "V_S24": {
+  "job": "mcp_f7c86c8dbb924d1e830a4dc8284dfbf5",
+  "kind": "video",
+  "credits": 300
+ },
+ "V_S25": {
+  "job": "mcp_a5899fcfe7cc477ab1a8fb136bff21da",
+  "kind": "video",
+  "credits": 300
+ },
+ "V_S25_failed": {
+  "job": "mcp_5b8b9dae24834882b2ab6b8f9585c46b",
+  "kind": "video",
+  "credits": 0,
+  "note": "생성 실패, 자동 환불"
+ }
+}

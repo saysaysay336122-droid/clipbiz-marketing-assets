@@ -20,7 +20,7 @@ for sh in spec["shots"]:
     if sh.get("voice_from"):
         duck.append((a + 0.25, a + 1.0))
 wav = f"ep08_sfx_cue_{tag}.wav"
-sfx_cine.mix(T, wav, music=mus, music_gain=0.95, events=events, duck=duck, silence=silence)
+sfx_cine.mix(T, wav, music=mus, music_gain=0.95, events=events, duck=duck, silence=silence, bed=[tuple(b) for b in spec.get("bed", [])])
 mp3 = "홍책사_8화_효과음큐_미리듣기.mp3"
 subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", wav, "-af", "highpass=f=30,lowshelf=f=90:g=-3,alimiter=limit=0.7:level=false,loudnorm=I=-14:TP=-2.5:LRA=11,alimiter=limit=0.74:level=false", "-ar", "48000",
                 "-c:a", "libmp3lame", "-b:a", "192k", mp3], check=True)

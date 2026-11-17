@@ -9,9 +9,13 @@
   fanfare  금관 느낌 화음(송년회, 승리)
   xmas     첼레스타와 작은 방울(겨울, 선물)
   office   첼로 지속음과 초침(긴장, 사무실)
+  action   웅장한 액션: 16분 현 오스티나토, 큰 북, 저음 맥박, 두 마디마다 낮은 금관(작전, 추격)
+  anthem   영웅 행진: 금관 화음, 팀파니, 작은북 롤 상승, 심벌(승리, 정면 돌파)
+  frozen   시간 정지: 높은 공기 패드, 낮은 지속음, 첼레스타로 홍책사 동기(멈춘 세상)
   stop     무음(반전 직전 정적)
 
-make(총초, [(시작, 끝, 스타일, 조성), ...], 출력 wav, bpm=None)
+make(총초, [(시작, 끝, 스타일, 조성), ...], 출력 wav, bpm=None, room=0.0)
+room을 0.15~0.25로 주면 곡 전체에 홀 잔향을 얹어 웅장하게 만든다(기본 0, 기존 회차와 같은 소리).
 조성은 'F', 'D', 'Bb', 'C', 'Cm', 'G', 'Eb' 가운데 하나. 단조는 m을 붙인다.
 """
 import math
@@ -22,7 +26,8 @@ import numpy as np
 SR = 48000
 rng = np.random.default_rng(16)
 ROOT = {"C": 48, "D": 50, "Eb": 51, "E": 52, "F": 53, "G": 55, "A": 57, "Bb": 58}
-DEF_BPM = dict(comedy=100, theme=72, romance=72, heist=128, groove=112, fanfare=120, xmas=76, office=90)
+DEF_BPM = dict(comedy=100, theme=72, romance=72, heist=128, groove=112, fanfare=120, xmas=76, office=90,
+               action=128, anthem=120, frozen=72)
 
 
 def hz(m):
@@ -197,11 +202,113 @@ def section(buf, a, b, style, key, bpm):
                     put(buf, at, piano(r + 12 + iv, 2.4, 0.42))
 
 
-def make(total, sections, out, bpm=None):
+def taiko(vel=0.7):
+    t = _t(0.9)
+    f = 55 * (1 + 0.8 * np.exp(-t * 26))
+    x = np.sin(2 * math.pi * np.cumsum(f) / SR) * env(len(t), 0.002, 5.5)
+    x += lp(rng.standard_normal(len(t)), SR / 700) * env(len(t), 0.001, 30) * 0.9
+    return np.tanh(x * 1.5) * vel * 0.55
+
+
+def timpani(m, vel=0.6):
+    t = _t(1.4)
+    f = hz(m) * (1 + 0.1 * np.exp(-t * 25))
+    x = np.sin(2 * math.pi * np.cumsum(f) / SR) + 0.35 * np.sin(2 * math.pi * np.cumsum(f * 1.5) / SR)
+    x = x * env(len(t), 0.002, 2.8) + lp(rng.standard_normal(len(t)), SR / 500) * env(len(t), 0.001, 30) * 0.6
+    return x * vel * 0.5
+
+
+def snare(vel=0.4):
+    n = int(0.18 * SR)
+    t = np.arange(n) / SR
+    x = rng.standard_normal(n) * 0.7 + np.sin(2 * math.pi * 190 * t) * 0.5
+    return x * env(n, 0.001, 22) * vel * 0.35
+
+
+def crash(vel=0.4):
+    n = int(2.2 * SR)
+    x = np.diff(rng.standard_normal(n), prepend=0)
+    x = x - lp(x, SR / 4000)
+    return x * env(n, 0.002, 1.6) * vel * 0.35
+
+
+def air(ms, dur, vel=0.25):
+    t = _t(dur)
+    x = sum(np.sin(2 * math.pi * hz(m) * t + rng.random()) * (1 + 0.3 * np.sin(2 * math.pi * (0.7 + 0.2 * i) * t))
+            for i, m in enumerate(ms))
+    e = np.minimum(1, t / 0.8) * np.clip((dur - t) / 0.8, 0, 1)
+    return x * e * vel * 0.12
+
+
+def epic_section(buf, a, b, style, key, bpm):
+    beat = 60 / bpm
+    ch = chords(key)
+    r = ROOT[key.rstrip("m")]
+    bars = int(math.ceil((b - a) / (beat * 4)))
+    if style == "anthem":
+        put(buf, a, crash(0.5))
+    for k in range(bars):
+        c = ch[k % 4]
+        t0 = a + k * beat * 4
+        if style == "frozen":
+            put(buf, t0, air([m + 24 for m in c], min(beat * 4.6, b - t0 + 0.8), 0.8))
+            put(buf, t0, air([c[0] - 12, c[0]], min(beat * 4.6, b - t0 + 0.8), 0.9))
+            continue
+        if style == "action" and k % 2 == 0:
+            put(buf, t0, brass([c[0] - 12, c[0] - 5, c[0]], beat * 1.6, 0.55))
+        if style == "anthem":
+            put(buf, t0, pad([m + 12 for m in c], min(beat * 4.4, b - t0 + 0.4), 0.28))
+        for s in range(16):
+            at = t0 + s * beat / 4
+            if at >= b:
+                break
+            if style == "action":
+                put(buf, at, stacc(c[0] + (24 if s % 4 == 2 else 12) + (7 if s % 8 == 6 else 0), 0.55 if s % 2 == 0 else 0.3))
+                if s in (0, 3, 6, 10, 12):
+                    put(buf, at, taiko(0.8 if s == 0 else 0.6))
+                if s % 2 == 0:
+                    put(buf, at, bass(c[0] - 12, 0.18, 0.5))
+                if s % 4 == 0:
+                    put(buf, at, tick(0.2))
+            elif style == "anthem":
+                if s in (0, 6, 8):
+                    put(buf, at, brass([m + 12 for m in c] + [c[0]], beat * (2 if s == 8 else 1.2), 0.55))
+                if s in (0, 8):
+                    put(buf, at, timpani(c[0] - 12, 0.7))
+                if s % 4 == 0:
+                    put(buf, at, bass(c[0] - 12, beat * 0.9, 0.45))
+                if s >= 12:
+                    put(buf, at, snare(0.2 + 0.08 * (s - 12)))
+    if style == "frozen":
+        motif = [(0, 12), (1, 16), (2, 19), (3, 17), (4.5, 16)]
+        for k in range(max(1, int((b - a) // (beat * 8)) + 1)):
+            for st, iv in motif:
+                at = a + 0.3 + k * beat * 8 + st * beat
+                if at < b - 0.2:
+                    put(buf, at, celesta(r + 24 + iv, 0.6))
+
+
+EPIC = ("action", "anthem", "frozen")
+
+
+def make(total, sections, out, bpm=None, room=0.0):
     buf = np.zeros(int((total + 2) * SR))
     for a, b, style, key in sections:
-        section(buf, a, b, style, key, bpm or DEF_BPM.get(style, 96))
+        if style in EPIC:
+            epic_section(buf, a, b, style, key, bpm or DEF_BPM.get(style, 96))
+        else:
+            section(buf, a, b, style, key, bpm or DEF_BPM.get(style, 96))
     buf = buf[: int(total * SR)]
+    if room > 0:
+        from scipy.signal import fftconvolve
+        g = np.random.default_rng(5)
+        n = int(2.2 * SR)
+        tt = np.arange(n) / SR
+        ir = g.standard_normal(n) * np.exp(-tt * 3.1)
+        ir = lp(ir, SR / 3000)
+        ir[: int(0.01 * SR)] = 0
+        ir /= np.sqrt(np.sum(ir ** 2))
+        buf = buf + fftconvolve(buf, ir)[: len(buf)] * room
     fade = int(0.04 * SR)
     for a, b, style, key in sections:
         if style == "stop":

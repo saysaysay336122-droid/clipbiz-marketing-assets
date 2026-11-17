@@ -12,6 +12,7 @@
   action   웅장한 액션: 16분 현 오스티나토, 큰 북, 저음 맥박, 두 마디마다 낮은 금관(작전, 추격)
   anthem   영웅 행진: 금관 화음, 팀파니, 작은북 롤 상승, 심벌(승리, 정면 돌파)
   frozen   시간 정지: 높은 공기 패드, 낮은 지속음, 첼레스타로 홍책사 동기(멈춘 세상)
+  speed    시간 정지 속 장난스러운 스윙: 워킹 베이스, 브러시, 라이드, 피아노 컴핑, 첼레스타 동기(120BPM, 두 박마다 장면 전환)
   stop     무음(반전 직전 정적)
 
 make(총초, [(시작, 끝, 스타일, 조성), ...], 출력 wav, bpm=None, room=0.0)
@@ -291,9 +292,86 @@ def epic_section(buf, a, b, style, key, bpm):
 EPIC = ("action", "anthem", "frozen")
 
 
+# ---------------------------------------------------------------- speed: 시간 정지 속 장난스러운 스윙(8화 v7)
+def upbass(m, dur=0.45, vel=0.6):
+    """콘트라베이스 느낌: 손가락 튕김 잡음과 짧게 줄어드는 몸통."""
+    t = _t(dur)
+    f = hz(m)
+    x = np.sin(2 * math.pi * f * t) + 0.45 * np.sin(2 * math.pi * 2 * f * t) * np.exp(-t * 9) + 0.15 * np.sin(2 * math.pi * 3 * f * t) * np.exp(-t * 14)
+    x = x * np.minimum(1, t / 0.006) * np.exp(-t * 3.2)
+    x += lp(rng.standard_normal(len(t)), SR / 1500) * env(len(t), 0.001, 60) * 0.25
+    r = int(0.04 * SR)
+    x[-r:] *= np.linspace(1, 0, r)
+    return x * vel * 0.5
+
+
+def brush(vel=0.3, sec=0.16):
+    n = int(sec * SR)
+    x = rng.standard_normal(n)
+    x = x - lp(x, SR / 1800)
+    x = lp(x, SR / 9000)
+    t = np.arange(n) / SR
+    e = np.minimum(1, t / 0.012) * np.exp(-t * 16)
+    return x * e * vel * 0.32
+
+
+def ride(vel=0.25):
+    n = int(0.9 * SR)
+    t = np.arange(n) / SR
+    x = sum(np.sin(2 * math.pi * f * t + rng.random()) * a for f, a in ((3110, 1), (4270, 0.7), (5530, 0.55), (7020, 0.4)))
+    x += np.diff(rng.standard_normal(n), prepend=0) * 0.25 * np.exp(-t * 60)
+    return x * env(n, 0.001, 5.5) * vel * 0.09
+
+
+def softkick(vel=0.5):
+    t = _t(0.35)
+    f = 70 * (1 + 0.9 * np.exp(-t * 35))
+    return np.sin(2 * math.pi * np.cumsum(f) / SR) * env(len(t), 0.002, 12) * vel * 0.55
+
+
+def speed_section(buf, a, b, key, bpm):
+    """빠른 스윙 그루브(120BPM 기본). 두 박마다 장면이 바뀌도록 1박과 3박에 무게를 둔다.
+    워킹 베이스, 브러시 스네어(2, 4박), 라이드 스윙, 피아노 컴핑(2박 반, 4박 반), 첼레스타로 홍책사 동기."""
+    beat = 60 / bpm
+    sw = beat * 0.16
+    ch = chords(key)
+    r = ROOT[key.rstrip("m")]
+    bars = int(math.ceil((b - a) / (beat * 4)))
+    motif = [(0, 12), (1, 16), (2, 19), (3, 17), (4.5, 16)]
+    answer = [(0, 19), (0.5, 21), (1, 19), (1.5, 17), (2, 16), (3, 12)]
+    for k in range(bars):
+        c = ch[k % 4]
+        nxt = ch[(k + 1) % 4]
+        t0 = a + k * beat * 4
+        walk = [c[0] - 24, c[1] - 24, c[2] - 24, nxt[0] - 24 + (1 if (nxt[0] - c[2]) % 12 > 6 else -1)]
+        for i in range(4):
+            at = t0 + i * beat
+            if at >= b:
+                break
+            put(buf, at, upbass(walk[i], beat * 0.95, 0.5 if i == 0 else 0.4))
+            if i in (0, 2):
+                put(buf, at, softkick(0.45 if i == 0 else 0.3))
+            if i in (1, 3):
+                put(buf, at, brush(0.65))
+            put(buf, at, ride(0.45 if i in (1, 3) else 0.34))
+            if i in (1, 3):
+                put(buf, at + beat / 2 + sw, ride(0.26))
+            if i in (1, 3) and at + beat / 2 + sw < b:
+                put(buf, at + beat / 2 + sw, sum(piano(m + 12, beat * 0.45, 0.2) for m in c))
+        # 선율: 2마디마다 홍책사 동기, 그 사이 마디는 짧은 대답
+        mel = motif if k % 2 == 0 else answer
+        for st, iv in mel:
+            at = t0 + st * beat + (sw if (st * 2) % 2 == 1 else 0)
+            if at < b - 0.05:
+                put(buf, at, celesta(r + 24 + iv, 0.55 if k % 2 == 0 else 0.4))
+
+
 def make(total, sections, out, bpm=None, room=0.0):
     buf = np.zeros(int((total + 2) * SR))
     for a, b, style, key in sections:
+        if style == "speed":
+            speed_section(buf, a, b, key, bpm or 120)
+            continue
         if style in EPIC:
             epic_section(buf, a, b, style, key, bpm or DEF_BPM.get(style, 96))
         else:

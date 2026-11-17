@@ -146,5 +146,41 @@
  "V_S17": {
   "job": "mcp_649a3a33c0124f05a4ff288ebee85de4",
   "cost": 375
+ },
+ "v7": {
+  "stills": {
+   "Q1": "mcp_a5f6a87a06734b998936672a6c7197d1",
+   "Q2": "mcp_a9f8a9211b5c4af4b9638c4740ad252c",
+   "Q3": "mcp_90f318f49e634a50abcb36500cc694f1",
+   "Q4": "mcp_e0258a9065b24a508a531c300278f7f6",
+   "Q5": "mcp_1f1103e845694542b8ab6ffd1e4eed10",
+   "Q6": "mcp_727be71038f548fbaa1c24ee72b839eb",
+   "Q7": "mcp_6cf39a8cb2644ec79417980c77e52577",
+   "Q8": "mcp_7a336a2786e64021a4061108567c1abd",
+   "Q9": "mcp_c413f4534a364f888c7eddd167d9232a",
+   "Q10": "mcp_2a6d7a2867f04549b86eaed05f4ba165",
+   "Q11": "mcp_8490fe48940846df8aa63f4dff181c80",
+   "B1": "mcp_2af1a0943a9843019ac2ad3b69f26dde",
+   "B2": "mcp_ed187c5f9a3042309e6672466796a9eb",
+   "B1_r2": "mcp_7afbf5cead13443ca14536a367d5eebc"
+  },
+  "videos": {
+   "Q1": "mcp_0a3f7e37431341888d75c73a2e3933dc",
+   "Q2": "mcp_af97bdb576584590a873a74a56bb2a70",
+   "Q3": "mcp_33381f34107f47e0a04e9405d1b1be0b",
+   "Q4": "mcp_1d30f31b48524c92a41ae6c4b1a5ac9f",
+   "Q5": "mcp_61f7903ad1a84c208fde1cbc3718d0a6",
+   "Q7": "mcp_c7db9abcbca64677be1530e7e000200d",
+   "Q9": "mcp_19a6506628bb421293660c6ce9d275b1",
+   "Q10": "mcp_2dcd35f5fac8428d889d1f0a431a7601",
+   "Q11": "mcp_700f0a7e505045899f6fb7cec0753d0c",
+   "B2": "mcp_0beba12f39464e63af6d86077c1c81a1",
+   "B3": "mcp_79a49e19e059404f9f8c399299fd825c"
+  },
+  "credits": {
+   "stills": 1050,
+   "videos": 3675,
+   "note": "Q11 audio on"
+  }
  }
 }

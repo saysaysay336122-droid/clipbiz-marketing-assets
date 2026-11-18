@@ -182,7 +182,7 @@ def vign(a, k=0.25):
 _PARTS = {}
 
 
-def impact(a, t, px, py, material="carpet", seed=7, strong=True, ox_amp=1.0):
+def impact(a, t, px, py, material="carpet", seed=7, strong=True, ox_amp=1.0, flash_k=0.82):
     """a: RGB float 화면. t: 접촉 기준 시각. 일곱 층을 겹친다."""
     b = a[..., ::-1].copy()
     cx, cy = px * W, py * H
@@ -203,7 +203,7 @@ def impact(a, t, px, py, material="carpet", seed=7, strong=True, ox_amp=1.0):
     b = VX.shockwave(b, cx, cy, t, amp=26 if strong else 14)
     b = parts.draw(b, t, "fg")
     if strong:
-        b = b * 0.18 + VX.flash(b, t) * 0.82
+        b = b * (1 - flash_k) + VX.flash(b, t) * flash_k
         b = VX.flicker(b, t)
     b = VX.chroma(np.clip(b, 0, 255), t)
     ox, oy = VX.shake_offset(t, seed)
@@ -606,9 +606,9 @@ def postit_note(img):
     lay = Image.new("RGBA", (int(iw * 0.2), int(ih * 0.11)), (0, 0, 0, 0))
     d = ImageDraw.Draw(lay)
     lw, lh = lay.size
-    f1 = F(FB, int(lh * 0.36))
+    f1 = F(FB, int(lh * 0.30))
     f2 = F(FR, int(lh * 0.24))
-    d.text((lw * 0.08, lh * 0.06), "오늘 1", font=f1, fill=(40, 52, 110, 235))
+    d.text((lw * 0.09, lh * 0.10), "오늘 1", font=f1, fill=(40, 52, 110, 235))
     d.text((lw * 0.10, lh * 0.56), "대기 51", font=f2, fill=(70, 74, 92, 210))
     lay = lay.rotate(8, resample=Image.BICUBIC, expand=True)
     im.alpha_composite(lay, (int(iw * 0.505 - lay.width / 2), int(ih * 0.640 - lay.height / 2)))

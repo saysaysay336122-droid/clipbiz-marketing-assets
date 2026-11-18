@@ -180,5 +180,192 @@
   "kind": "video",
   "credits": 0,
   "note": "생성 실패, 자동 환불"
+ },
+ "P7_suit2": {
+  "job": "mcp_10f7121a126a4578930b76c178bf0f39",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_U3": {
+  "job": "mcp_73af6bfcae184197998ccfb28e2d28db",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_U4": {
+  "job": "mcp_5d8d8287d5d942c0abb903ad170cfa39",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_F6": {
+  "job": "mcp_3f6739f14d7f4cdd9e34cb27044ef5dd",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_F7": {
+  "job": "mcp_1ad2100450554a07a7d920f6291e365d",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_H1": {
+  "job": "mcp_b10fdfa46a9d4136994661cc27e9a2b2",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_H2": {
+  "job": "mcp_39f56c45fa27472896988fd4db9ebc83",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_K2": {
+  "job": "mcp_f428e43475d1476bbb9b45dd06c78148",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_suit2b": {
+  "job": "mcp_2ecdb70d2e8f4526841a8a8b6f7f59ea",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_U2s": {
+  "job": "mcp_b7d035e1cbae4001a873d95a6786085f",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_U6": {
+  "job": "mcp_cb91bb58009d4a418a98e2e60429f49c",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_F2": {
+  "job": "mcp_aa8dfe76b7b5471582233ec8a1a5bcb2",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_F3": {
+  "job": "mcp_7a4a8de99c104c7990fe021e2c53eda2",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_F4": {
+  "job": "mcp_8dc132d97f294c998fd52e0cfa04fda9",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_F5": {
+  "job": "mcp_b8b76d8d0f7843e28a55fe240ad16d10",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_S20n": {
+  "job": "mcp_ba66fd15d3ca4d7199d1cf89a137ebbf",
+  "kind": "still",
+  "credits": 75
+ },
+ "P7_K1": {
+  "job": "mcp_00b24794d18f4094be3fd9b52c34f8d9",
+  "kind": "still",
+  "credits": 75
+ },
+ "V7_U1": {
+  "job": "mcp_456eeb3c70e64e7eb81c2b7c6ab3e3e3",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_F1": {
+  "job": "mcp_98452d665271442285c8458a6665494c",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_F6": {
+  "job": "mcp_e7585c25c2de48f7820b896691d786f8",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_H1": {
+  "job": "mcp_ba8967a56ad14b93a5834de1464fe898",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_H2": {
+  "job": "mcp_8892488165534a08b25c67016ca877d8",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_K2": {
+  "job": "mcp_20e54602b3ec4475846a8ad93cc124b2",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_U3": {
+  "job": "mcp_f8a9919776aa4713bbea4bb9f5b790b4",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_U4": {
+  "job": "mcp_d84ef4208db34c0e80d0445d93c2155e",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_U2": {
+  "job": "mcp_0ce9b233c6464099973c98e1ded08ce2",
+  "kind": "video",
+  "credits": 450
+ },
+ "V7_U6": {
+  "job": "mcp_fac8556535a54f8496f6e0799c1b0699",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_F2": {
+  "job": "mcp_c918695583224f00ba1d2a81b43c811b",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_F3": {
+  "job": "mcp_58fe8621dd9b4b9380566320eeebc006",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_F4": {
+  "job": "mcp_3b6ea5101fb344a08ff4f6901e217b2f",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_F5": {
+  "job": "mcp_227f3afb77f94d25ab8c6a8659e0f7f8",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_F7": {
+  "job": "mcp_94f0689780e74d31842dad04da7ce89b",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_S20n": {
+  "job": "mcp_b022b8b9b7f74265aa481a364a54d6b9",
+  "kind": "video",
+  "credits": 375
+ },
+ "V7_K1": {
+  "job": "mcp_8fcd5f74f1e44319a2f482d0c7e7a7b1",
+  "kind": "video",
+  "credits": 300
+ },
+ "V7_F5_failed": {
+  "job": "mcp_35a76d3b38994bd89751a754eff4611d",
+  "kind": "video",
+  "credits": 0,
+  "note": "생성 실패, 자동 환불"
+ },
+ "P7_U4b": {
+  "job": "mcp_6c999799c73a48f490d24e86bdaa635c",
+  "kind": "still",
+  "credits": 75
+ },
+ "V7_U4b": {
+  "job": "mcp_d7b57fa9faf14760b4f92ce0877a0b21",
+  "kind": "video",
+  "sec": 4,
+  "credits": 300
  }
 }

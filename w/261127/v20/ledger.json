@@ -1,0 +1,178 @@
+{
+ "gogi": {
+  "job": "mcp_0ec14ada96dd432e88234fd809a607df",
+  "cost": 75
+ },
+ "F1": {
+  "job": "mcp_fb1370c488704c0daab0f851f42d8c9d",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_fb1370c488704c0daab0f851f42d8c9d/output/output_0.png"
+ },
+ "F2": {
+  "job": "mcp_3a1cf980883c4ccc89f07b0ec26322d3",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_3a1cf980883c4ccc89f07b0ec26322d3/output/output_0.png"
+ },
+ "S1": {
+  "job": "mcp_3ab97dc82d8e43f789f4504d0a98b01e",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_3ab97dc82d8e43f789f4504d0a98b01e/output/output_0.png"
+ },
+ "S3": {
+  "job": "mcp_dfb59ee25db949259b86c7e92c113740",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_dfb59ee25db949259b86c7e92c113740/output/output_0.png"
+ },
+ "S4": {
+  "job": "mcp_01db833c8ffc47cc83848cf99b485fd5",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_01db833c8ffc47cc83848cf99b485fd5/output/output_0.png"
+ },
+ "S5": {
+  "job": "mcp_423ae6bdb50d47a1b175877486442e37",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_423ae6bdb50d47a1b175877486442e37/output/output_0.png"
+ },
+ "S6": {
+  "job": "mcp_aeecb38b9dee403381a9990e64f02533",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_aeecb38b9dee403381a9990e64f02533/output/output_0.png"
+ },
+ "S7": {
+  "job": "mcp_5ef77b7299ab49b1bdc2bf7969bf6975",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_5ef77b7299ab49b1bdc2bf7969bf6975/output/output_0.png"
+ },
+ "S10": {
+  "job": "mcp_2431a97f1aa04376b2ec8e74eff1ab38",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_2431a97f1aa04376b2ec8e74eff1ab38/output/output_0.png"
+ },
+ "S12": {
+  "job": "mcp_d082352cdd1a496580cf47a3e0c7d315",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_d082352cdd1a496580cf47a3e0c7d315/output/output_0.png"
+ },
+ "S13": {
+  "job": "mcp_32134c67be8f438bbde8c1540b3ceb2f",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_32134c67be8f438bbde8c1540b3ceb2f/output/output_0.png"
+ },
+ "S14": {
+  "job": "mcp_2adf001ce6484f8abbaf85c2ed2593bb",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_2adf001ce6484f8abbaf85c2ed2593bb/output/output_0.png"
+ },
+ "S15": {
+  "job": "mcp_3ba7b80fe55c4b94b4f4634836f387dc",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_3ba7b80fe55c4b94b4f4634836f387dc/output/output_0.png"
+ },
+ "S16": {
+  "job": "mcp_b121b94a061e4eaebe6dc59eb731dee3",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_b121b94a061e4eaebe6dc59eb731dee3/output/output_0.png"
+ },
+ "S17": {
+  "job": "mcp_6eb7de693e3243239a270c1027509780",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_6eb7de693e3243239a270c1027509780/output/output_0.png"
+ },
+ "S18": {
+  "job": "mcp_4a891ee5abb94d52a53842a0254168e0",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_4a891ee5abb94d52a53842a0254168e0/output/output_0.png"
+ },
+ "S19": {
+  "job": "mcp_4132c8e8b7144a85bae9f893fa3c3ae5",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_4132c8e8b7144a85bae9f893fa3c3ae5/output/output_0.png"
+ },
+ "_video": {
+  "S1": {
+   "job": "mcp_c66ffc86afb944dfbf131295f7d4ee17",
+   "cost": 300
+  },
+  "S3": {
+   "job": "mcp_5e6531310e954645bf3241029da1d779",
+   "cost": 300
+  },
+  "S4": {
+   "job": "mcp_d6c4a2a2195544489c7aa6bdd6dceee8",
+   "cost": 300
+  },
+  "S5": {
+   "job": "mcp_5333880abf0c421aafdd28f63fc1c724",
+   "cost": 300
+  },
+  "S7": {
+   "job": "mcp_1ba57811be65403599ce441386d11fbc",
+   "cost": 300
+  },
+  "S10": {
+   "job": "mcp_7fcc279fb9004472a9c7de42e7464c3d",
+   "cost": 300
+  },
+  "S12": {
+   "job": "mcp_0e68d498f2554e6c8bb89e19137565cf",
+   "cost": 300
+  },
+  "S13": {
+   "job": "mcp_a520e9577e784f5c85e97d3e506fe639",
+   "cost": 300
+  },
+  "S15": {
+   "job": "mcp_c079b57c762e44dc901d0759734e4cf6",
+   "cost": 300
+  },
+  "S16": {
+   "job": "mcp_f5e4b212c19a42d2af4b7c45327c14a9",
+   "cost": 300
+  },
+  "S17": {
+   "job": "mcp_e577c9fb47164910b70b0c96b3c54101",
+   "cost": 300
+  },
+  "S18": {
+   "job": "mcp_2008a0dfa68647f7b04bc63aeb1aaebb",
+   "cost": 300
+  },
+  "S19": {
+   "job": "mcp_48e6560f725046ac9176f67fd615e963",
+   "cost": 300
+  },
+  "N3": {
+   "job": "mcp_234cd6ba006b4cd1a15833633dfd9770",
+   "cost": 300
+  },
+  "N5": {
+   "job": "mcp_117110bc871d453fb78b17bff82c6bed",
+   "cost": 300
+  }
+ },
+ "N3": {
+  "job": "mcp_6c7bcb9200e64ca4b61790a3821b7433",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_6c7bcb9200e64ca4b61790a3821b7433/output/output_0.png"
+ },
+ "N4": {
+  "job": "mcp_3d6ab586126d488cba0f8038812d08ca",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_3d6ab586126d488cba0f8038812d08ca/output/output_0.png"
+ },
+ "N5": {
+  "job": "mcp_cfe34422bb564148a16c81db5d9efce8",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_cfe34422bb564148a16c81db5d9efce8/output/output_0.png"
+ },
+ "N4b": {
+  "job": "mcp_73965607605b4536b16fa1d6cb6f12c1",
+  "cost": 75,
+  "url": "https://cdn.aistudio.dropshot.io/public/jobs/prod/mcp_73965607605b4536b16fa1d6cb6f12c1/output/output_0.png",
+  "note": "N4 1차는 병 라벨 글씨가 보여 다시 생성"
+ },
+ "N5_start": {
+  "url": "https://cdn.aistudio.dropshot.io/public/mcp-uploads/prod/3EJI06MN/31fbde54273a498cb5df06a97f105a4e/ep10_N5_start.png",
+  "note": "N5 사진에서 병 라벨을 지우고 흐리게 한 시작 프레임"
+ }
+}

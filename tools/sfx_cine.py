@@ -857,12 +857,92 @@ def cheer():
     x = (claps * 0.9 + crowd * 0.5) * np.minimum(1, np.linspace(0, 6, n)) * np.minimum(1, np.linspace(2.2, 0, n))
     return _norm(_widen(_verb(_pan(x, 0, 1.0), "hall", 0.22), 1.2), 0.7)
 
+
+def cricket():
+    """정적 속 귀뚜라미: 4.6kHz 짧은 떨림 세 번을 두 묶음(썰렁한 순간, 10화)."""
+    sec = 1.0
+    x = np.zeros(int(sec * SR))
+    for g0 in (0.0, 0.42):
+        for k in range(3):
+            at = g0 + k * 0.055
+            n = int(0.04 * SR)
+            tt = np.arange(n) / SR
+            s = np.sin(2 * math.pi * 4600 * tt) * (0.5 + 0.5 * np.sin(2 * math.pi * 480 * tt)) * np.sin(math.pi * tt / 0.04)
+            j = int(at * SR)
+            x[j:j + n] += s[: len(x) - j] * 0.5
+    return _norm(_verb(_pan(x, 0.3, 0.2), "room", 0.25), 0.55)
+
+
+def zipper():
+    """지퍼 지익: 잇빨 걸리는 딸깍 연타가 빨라지며 대역이 올라간다 0.45초(봉투를 안주머니에, 10화)."""
+    sec = 0.5
+    n = int(sec * SR)
+    x = np.zeros(n)
+    g = np.random.default_rng(53)
+    at = 0.0
+    while at < 0.42:
+        prog = at / 0.42
+        lo = 1200 + 2500 * prog
+        c = _bp(g.standard_normal(int(0.004 * SR)), lo, lo * 3) * _env(int(0.004 * SR), 0.0002, 700) * g.uniform(0.5, 1.0)
+        j = int(at * SR)
+        x[j:j + len(c)] += c[: n - j]
+        at += 0.012 - 0.007 * prog
+    x += _bp(g.standard_normal(n), 2000, 6000) * 0.08 * np.minimum(1, np.linspace(0, 3, n)) * np.minimum(1, np.linspace(8, 0, n))
+    return _norm(_verb(_pan(x, -0.1, 0.3), "room", 0.1), 0.7)
+
+
+def vibrate():
+    """휴대폰 진동 두 번: 170Hz 거친 웅웅과 탁자 덜덜(본부장 메시지, 10화)."""
+    sec = 0.9
+    x = np.zeros(int(sec * SR))
+    for at in (0.0, 0.48):
+        n = int(0.32 * SR)
+        tt = np.arange(n) / SR
+        s = np.tanh(2.5 * np.sin(2 * math.pi * 172 * tt)) * 0.5 + np.sin(2 * math.pi * 344 * tt) * 0.15
+        s *= np.minimum(1, tt / 0.01) * np.minimum(1, (0.32 - tt) / 0.02)
+        j = int(at * SR)
+        x[j:j + n] += s[: len(x) - j]
+    x = _bp(x, 120, 3000)
+    return _norm(_verb(_pan(x, 0, 0.2), "room", 0.12), 0.65)
+
+
+def sting():
+    """반사 순간의 낮은 현악 불협화음: 단2도 저음 덩어리가 빠르게 떨며 0.9초, 짧은 쇳소리(10화 팀장님도 반사)."""
+    sec = 1.3
+    n = int(sec * SR)
+    tt = np.arange(n) / SR
+    x = np.zeros(n)
+    for f, a in ((98.0, 0.5), (103.8, 0.45), (196.0, 0.25), (207.7, 0.22), (293.7, 0.12)):
+        ph = 2 * math.pi * f * tt + 0.4 * np.sin(2 * math.pi * 5.5 * tt)
+        saw = 2 * ((ph / (2 * math.pi)) % 1) - 1
+        x += saw * a
+    x = _lp(x, 1800) * (0.75 + 0.25 * np.sin(2 * math.pi * 13 * tt)) * _env(n, 0.012, 2.2)
+    x[: int(0.02 * SR)] += _crack(0.02, 1500, 7000, 150)[: int(0.02 * SR)] * 0.6
+    return _norm(_glue(_verb(_pan(x, 0, 0.8), "hall", 0.3), -18, 3), 0.85)
+
+
+def drumroll():
+    """작은북 롤 0.9초: 타격이 촘촘해지며 커지다 뚝 끊긴다(건배 직전, 10화)."""
+    sec = 0.95
+    n = int(sec * SR)
+    x = np.zeros(n)
+    g = np.random.default_rng(59)
+    at = 0.0
+    while at < 0.88:
+        prog = at / 0.88
+        m = int(0.05 * SR)
+        hit = (_bp(g.standard_normal(m), 1500, 7000) * 0.6 + np.sin(2 * math.pi * 190 * np.arange(m) / SR) * 0.4) * _env(m, 0.0005, 60)
+        j = int(at * SR)
+        x[j:j + m] += hit[: n - j] * (0.25 + 0.75 * prog) * g.uniform(0.8, 1.0)
+        at += 0.045 - 0.02 * prog
+    return _norm(_verb(_pan(x, 0, 0.4), "room", 0.18), 0.8)
+
 CINE = dict(bootdn=bootdn, tape=tape, keys=keys, buzz=buzz, wang=wang, hit=hit, hitd=hitd, freeze=freeze, subdrop=subdrop, boom=boom, suck=suck, rise1=rise1, rise2=rise2,
             revcym=revcym, braam=braam, bigbell=bigbell, ring=ring, tickh=tickh, timp=timp, stamp=stamp, kachunk=kachunk,
             glitch=glitch, stutter=stutter, lockon=lockon, alarm=alarm, swishr=swishr, swishl=swishl, passr=passr,
             gust=gust, paper=paper, roll=roll, coinx=coinx, heartx=heartx, shimmer=shimmer, drum=drum,
             clank=clank, bootup=bootup, groan=groan, splash=splash, plink=plink, baduk=baduk, cascade=cascade, mail=mail, magnet=magnet,
-            sizzle=sizzle, clink=clink, cheer=cheer)
+            sizzle=sizzle, clink=clink, cheer=cheer, cricket=cricket, zipper=zipper, vibrate=vibrate, sting=sting, drumroll=drumroll)
 _CACHE = {}
 
 

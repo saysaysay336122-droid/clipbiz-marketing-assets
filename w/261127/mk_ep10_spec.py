@@ -1,4 +1,4 @@
-"""홍책사 10화 송년회 건배사 설계서 생성. python3 mk_ep10_spec.py -> ep10_spec.json"""
+"""홍책사 10화 송년회 건배사 설계서 생성(v5 벤치마크 보강). python3 mk_ep10_spec.py -> ep10_spec.json"""
 import json
 
 S8 = json.load(open("../261123/ep08_spec_v6.json", encoding="utf-8"))
@@ -53,7 +53,7 @@ plan = [
                      still="검은 터틀넥 소매의 손가락이 가운데 네모 구멍이 뚫린 오래된 놋쇠 엽전 하나를 원목 테이블 위에 세워 막 튕기려는 순간. 얼굴은 화면 밖.",
                      action="0~0.4초 손가락이 엽전을 튕긴다, 0.4초부터 엽전이 선 채로 빠르게 돈다, 손은 화면 밖으로 빠진다.",
                      refs_extra=[COIN_URL], sfx=[[0.05, "coinx", 0.8]])),
-    ("R1", 0.6, dict(kind="comp", comp="rewind", base="S1과 S3을 4배속으로 거꾸로, 위아래로 흐르는 되감기 줄무늬와 색 번짐", caption="다시",
+    ("R1", 0.6, dict(kind="comp", comp="rewind", base="S3, S1을 거꾸로 재생하는 속도 램프 되감기: 2배속에서 8배속으로 빨라지며 모션 블러, 줄무늬와 색 번짐 같은 장식 없음, 끝 프레임에서 바로 컷", hud_roll="1트에서 2트로 숫자가 위로 굴러 바뀜", caption="다시",
                      sfx=[[0.0, "rewind", 0.9]])),
     ("S4", 2.4, dict(kind="video", gen_sec=4, use=[0.3, 2.7], set="gogi", chars=["choi"], audio=True, speaker="choi",
                      line="마무리는 도윤 씨.", cue=0.4,
@@ -72,6 +72,7 @@ plan = [
     ("S6", 0.8, dict(kind="still", set="gogi", chars=[],
                      framing="와이드 숏, 도윤의 어깨 너머 시점, 35mm.",
                      still=f"고깃집 룸 전체가 조용하다. 테이블에 앉은 팀원들이 잔을 든 채 아무도 따라 외치지 않고 멀뚱히 도윤을 본다, 불판 위 고기만 지글거린다. {TEAM}",
+                     fx="0.8초 동안 100%에서 112%로 천천히 밀고 들어가는 정적 줌",
                      sfx=[[0.0, "sizzle", 0.4]])),
     ("S7", 2.4, dict(kind="video", gen_sec=4, use=[0.2, 2.6], set="gogi", chars=["choi"], audio=True, speaker="choi",
                      line="청춘은 바로 지금.", cue=0.3,
@@ -80,7 +81,7 @@ plan = [
                      still="조용한 룸에서 최 팀장 혼자 엉덩이를 반쯤 들고 잔을 높이 든 채 진지한 얼굴로 구호를 받아 주려는 순간.",
                      action="0~0.3초 혼자 일어선다, 0.3초부터 잔을 높이 들고 힘차게 혼자 외친다, 끝에 주변을 둘러본다.")),
     ("S8", 0.6, dict(kind="video", reuse="S3", use=[0.0, 0.6], sfx=[[0.05, "coinx", 0.8]])),
-    ("R2", 0.6, dict(kind="comp", comp="rewind", base="S7, S6, S5를 4배속으로 거꾸로, R1과 같은 줄무늬", caption="다시",
+    ("R2", 0.6, dict(kind="comp", comp="rewind", base="S8, S7, S6, S5를 거꾸로 재생하는 속도 램프 되감기, R1과 같은 방식", hud_roll="2트에서 3트로 숫자가 위로 굴러 바뀜", caption="다시",
                      sfx=[[0.0, "rewind", 0.9]])),
     ("S9", 0.8, dict(kind="video", reuse="S4", use=[0.3, 1.1], hud="3트", sfx=[[0.05, "tapestart", 0.6]])),
     ("S10", 3.2, dict(kind="video", gen_sec=4, use=[0.2, 3.4], set="gogi", chars=["hong", "doyun"], audio=True, speaker="hong",
@@ -114,17 +115,22 @@ plan = [
                       camera="고정, 0.2초에 짧은 크래시 줌 인.",
                       still="도윤이 잔을 머리 위로 번쩍 들어 올리며 크게 선창하기 직전, 자신만만한 얼굴.",
                       action="0~0.2초 잔을 번쩍 든다, 0.2초부터 크고 또렷하게 선창한다, 그 뒤 잔을 든 채 대답을 기다린다.",
+                      sub_style="pop_white",
                       sfx=[[0.0, "drum", 0.6]])),
     ("S14", 0.4, dict(kind="still", set="gogi", chars=["choi"],
                       framing="와이드 숏, 테이블 옆 낮은 시점, 35mm.",
                       still=f"모두 잔을 든 채 동시에 고개를 돌려 테이블 끝 최 팀장을 쳐다보는 순간, 최 팀장은 무표정으로 잔을 들고 있다. {TEAM}",
+                      fx="0.1초 만에 100%에서 118%로 최 팀장 얼굴 쪽 스냅 줌",
                       sfx=[])),
+    ("FZ", 0.6, dict(kind="comp", comp="freeze", base="S15 시작 사진(굳은 얼굴로 일어나기 시작하며 노려보는 최 팀장)을 정지 화면으로, 0.6초 동안 100%에서 108%로 밀고 채도 살짝 빼기, S15 첫 프레임과 같은 화면이라 정지가 풀리며 바로 이어짐",
+                     caption="도윤 속마음\n4트 준비", sfx=[[0.0, "scratch", 0.8]])),
     ("S15", 2.2, dict(kind="video", gen_sec=4, use=[0.0, 2.2], set="gogi", chars=["choi"], audio=True, speaker="choi",
                       line="내년에.", cue=0.9,
                       framing="미디엄 클로즈업, 최 팀장 정면, 약간 로우 앵글, 85mm.",
                       camera="0~0.9초 일어서는 팀장을 따라 천천히 틸트 업, 0.9초에 크래시 줌 인.",
                       still="최 팀장이 굳은 얼굴로 잔을 쥔 채 의자에서 천천히 일어나기 시작하는 순간, 안경 너머로 도윤을 똑바로 노려본다.",
                       action="0~0.9초 굳은 얼굴로 천천히 일어서며 도윤을 노려본다, 0.9초 눈썹이 풀리며 활짝 웃음이 터지고 잔을 높이 들어 누구보다 크게 외친다.",
+                      sub_style="pop_yellow",
                       sfx=[[0.15, "subdrop", 0.5], [0.87, "hit", 0.7]])),
     ("S16", 1.8, dict(kind="video", gen_sec=4, use=[0.0, 1.8], set="gogi", chars=["choi", "doyun"], audio=False,
                       framing="와이드 숏, 테이블 위 높은 시점에서 잔들이 모이는 가운데를 내려다봄, 35mm.",
@@ -144,6 +150,7 @@ plan = [
                       camera="고정.",
                       still="도윤이 웃는 얼굴로 반사적으로 잔을 들어 올리는 순간.",
                       action="0~0.2초 반사적으로 잔을 들며 밝게 외친다, 0.6초부터 자기가 무슨 말을 했는지 깨닫고 웃음이 굳는다, 2.2초부터 천천히 고개를 돌려 무표정으로 카메라를 정면으로 본다.",
+                      sub_style="pop_yellow",
                       sfx=[[0.1, "pop", 0.5]])),
     ("S19", 3.4, dict(kind="video", gen_sec=4, use=[0.0, 3.4], set="gogi", chars=["choi"], audio=True, speaker="choi",
                       line="내년에도 건배사는 도윤 씨.", cue=0.5,
@@ -156,7 +163,7 @@ plan = [
                       sfx=[[0.0, "thunk", 0.8]])),
     ("S21", 2.4, dict(kind="comp", comp="hong_close", base="7화부터 쓰는 홍책사 클로즈업 고정 컷과 1화 녹음 '홍책사 한 수면, 됐지?'",
                       sfx=[[0.0, "coin", 0.6]])),
-    ("S22", 3.0, dict(kind="comp", comp="endcard", base="엽전 꾸러미 끝 화면, 10닢째만 빛남, 열 번째 닢 소품은 작은 투명 잔",
+    ("S22", 3.0, dict(kind="comp", comp="endcard", base="엽전 꾸러미 끝 화면, 10닢째만 빛남, 열 번째 닢 소품은 작은 투명 잔. 배경은 S1 첫 프레임(탄 고기 불판)을 흐리고 어둡게 깔고, 마지막 0.4초에 엽전과 글자가 사라지며 흐림이 풀려 S1 첫 프레임과 같은 화면이 된다(다시 보기 이음)",
                       coins=["10닢째", "2027 한 수", "hongchaksa.kr"], sfx=[[0.0, "logo", 0.8]])),
 ]
 
@@ -176,14 +183,14 @@ def music_cues(shots, total):
     shout = round(T["S15"][0] + 0.9, 2)
     c = [(0, T["S3"][0], "comedy"), (T["S3"][0], T["S4"][0], "stop"), (T["S4"][0], T["S6"][0], "comedy"),
          (T["S6"][0], T["S7"][0], "stop"), (T["S7"][0], T["S8"][0], "comedy"), (T["S8"][0], T["S9"][0], "stop"),
-         (T["S9"][0], T["S12"][0], "theme"), (T["S12"][0], T["S14"][0], "comedy"), (T["S14"][0], shout, "stop"),
+         (T["S9"][0], T["S12"][0], "theme"), (T["S12"][0], T["FZ"][0], "comedy"), (T["FZ"][0], shout, "stop"),
          (shout, T["S17"][0], "anthem"), (T["S17"][0], T["S20"][0], "comedy"), (T["S20"][0], T["S21"][0], "stop"),
          (T["S21"][0], T["S22"][0], "theme"), (T["S22"][0], round(total, 2), "stop")]
     return [[round(a, 2), round(b, 2), st, "F"] for a, b, st in c]
 
 
 spec = {
-    "title": "홍책사 10화 송년회 건배사 3트 v4",
+    "title": "홍책사 10화 송년회 건배사 3트 v5",
     "target_sec": round(t, 2),
     "reserve_ratio": 0.25,
     "characters": {"doyun": doyun, "choi": choi, "hong": hong},
@@ -194,6 +201,8 @@ spec = {
     "music": music_cues(shots, t),
     "new_sfx": {"sizzle": "불판 지글: 분홍 잡음 띠 2~8kHz에 무작위 톡 소리", "clink": "작은 유리잔 여러 개가 부딪는 맑은 소리",
                 "cheer": "박수 잡음 연타와 낮은 환호 덩어리(말소리 없음)"},
+    "sub_styles": {"pop_white": "대사 자막을 화면 가운데 큰 흰 글자 검은 테로, 1.2배에서 1.0배로 0.12초 튀어 오름",
+                   "pop_yellow": "대사 자막을 화면 가운데 큰 노란 글자(이름표와 같은 노랑) 검은 테로, 1.2배에서 1.0배로 0.12초 튀어 오름"},
 }
 json.dump(spec, open("ep10_spec.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print("total", round(t, 2), "shots", len(shots))

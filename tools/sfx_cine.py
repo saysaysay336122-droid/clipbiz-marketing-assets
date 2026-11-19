@@ -804,11 +804,65 @@ def bootdn():
     x[j:j + len(hum)] += hum[: len(x) - j]
     return _norm(_widen(_verb(_pan(x, 0, 0.5), "room", 0.2)), 0.8)
 
+
+def sizzle():
+    """고깃집 불판 지글: 2~8kHz 잡음 띠가 숨 쉬듯 출렁이고 기름 톡 소리가 무작위로 튄다(10화 송년회)."""
+    sec = 1.6
+    n = int(sec * SR)
+    g = np.random.default_rng(41)
+    base = _bp(g.standard_normal(n), 2000, 8000, 2) * 0.35
+    base *= 0.7 + 0.3 * np.abs(np.sin(2 * math.pi * 1.7 * _t(sec)))
+    pops = np.zeros(n)
+    at = 0.02
+    while at < sec - 0.02:
+        c = _hp(g.standard_normal(int(0.003 * SR)), 3000) * _env(int(0.003 * SR), 0.0002, 900) * g.uniform(0.3, 1.0)
+        j = int(at * SR)
+        pops[j:j + len(c)] += c[: n - j]
+        at += g.uniform(0.015, 0.09)
+    x = (base + pops * 0.8) * np.minimum(1, np.linspace(0, 8, n)) * np.minimum(1, np.linspace(6, 0, n))
+    return _norm(_verb(_pan(x, 0, 0.7), "room", 0.12), 0.6)
+
+
+def clink():
+    """작은 유리잔 여럿이 부딪는 맑은 소리: 어긋난 높은 부분음 네 묶음이 30~70ms 간격으로."""
+    sec = 1.5
+    x = np.zeros(int(sec * SR))
+    g = np.random.default_rng(43)
+    at = 0.0
+    for k in range(5):
+        f0 = g.uniform(2600, 3600)
+        n = int(1.1 * SR)
+        tt = np.arange(n) / SR
+        s = sum(np.sin(2 * math.pi * f0 * r * tt) * a * np.exp(-tt * d) for r, a, d in ((1, 0.5, 7), (2.32, 0.3, 11), (3.9, 0.18, 16), (5.4, 0.1, 22)))
+        s[: int(0.004 * SR)] += _crack(0.004, 3000, 10000, 400)[: int(0.004 * SR)] * 0.6
+        j = int(at * SR)
+        x[j:j + n] += s[: len(x) - j] * g.uniform(0.6, 1.0)
+        at += g.uniform(0.03, 0.07)
+    return _norm(_widen(_verb(_pan(x, 0, 0.7), "room", 0.18)), 0.75)
+
+
+def cheer():
+    """박수와 환호 덩어리(말소리 없음): 손뼉 수백 번의 잡음 연타와 사람 목소리 대역의 부드러운 '와' 모음 잡음."""
+    sec = 2.4
+    n = int(sec * SR)
+    g = np.random.default_rng(47)
+    claps = np.zeros(n)
+    for _ in range(420):
+        at = g.uniform(0.05, sec - 0.1)
+        c = _bp(g.standard_normal(int(0.012 * SR)), 900, 5000) * _env(int(0.012 * SR), 0.0005, 250) * g.uniform(0.2, 0.7)
+        j = int(at * SR)
+        claps[j:j + len(c)] += c[: n - j]
+    crowd = sum(_bp(g.standard_normal(n), f * 0.85, f * 1.15, 2) * a for f, a in ((520, 0.5), (900, 0.35), (1500, 0.2)))
+    crowd *= 0.6 + 0.4 * np.sin(2 * math.pi * 0.6 * _t(sec) + 0.4)
+    x = (claps * 0.9 + crowd * 0.5) * np.minimum(1, np.linspace(0, 6, n)) * np.minimum(1, np.linspace(2.2, 0, n))
+    return _norm(_widen(_verb(_pan(x, 0, 1.0), "hall", 0.22), 1.2), 0.7)
+
 CINE = dict(bootdn=bootdn, tape=tape, keys=keys, buzz=buzz, wang=wang, hit=hit, hitd=hitd, freeze=freeze, subdrop=subdrop, boom=boom, suck=suck, rise1=rise1, rise2=rise2,
             revcym=revcym, braam=braam, bigbell=bigbell, ring=ring, tickh=tickh, timp=timp, stamp=stamp, kachunk=kachunk,
             glitch=glitch, stutter=stutter, lockon=lockon, alarm=alarm, swishr=swishr, swishl=swishl, passr=passr,
             gust=gust, paper=paper, roll=roll, coinx=coinx, heartx=heartx, shimmer=shimmer, drum=drum,
-            clank=clank, bootup=bootup, groan=groan, splash=splash, plink=plink, baduk=baduk, cascade=cascade, mail=mail, magnet=magnet)
+            clank=clank, bootup=bootup, groan=groan, splash=splash, plink=plink, baduk=baduk, cascade=cascade, mail=mail, magnet=magnet,
+            sizzle=sizzle, clink=clink, cheer=cheer)
 _CACHE = {}
 
 

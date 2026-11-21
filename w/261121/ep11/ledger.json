@@ -62,5 +62,45 @@
  "S5v": {
   "job": "mcp_2b890371ea7f480c98a2f9127aebf194",
   "cost": 300
+ },
+ "N1": {
+  "job": "mcp_58f75a3ba8154878941c11a53dec12a9",
+  "cost": 75
+ },
+ "N2": {
+  "job": "mcp_9eb5fd1226564f948352eb728d4cbf5a",
+  "cost": 75
+ },
+ "N3": {
+  "job": "mcp_af9264bc5ce34d1fb018cbe2b2ebfbb2",
+  "cost": 75
+ },
+ "N4": {
+  "job": "mcp_1fd6214cff6c4952a7aebe6b90f6a4f5",
+  "cost": 75
+ },
+ "N5": {
+  "job": "mcp_e6fe696a2dae44059fe99c95ff849f38",
+  "cost": 75
+ },
+ "N1v": {
+  "job": "mcp_905517de532c4329ac2262d8f027104b",
+  "cost": 300
+ },
+ "N2v": {
+  "job": "mcp_376546abd13442a28d28580a84ed2441",
+  "cost": 300
+ },
+ "N3v": {
+  "job": "mcp_32d7052474064943964145db1bc1d8e0",
+  "cost": 300
+ },
+ "N4v": {
+  "job": "mcp_501f29bec21f45459e592e9c8192afe4",
+  "cost": 375
+ },
+ "N5v": {
+  "job": "mcp_20c8f195a9334621bb291c43b9035aa3",
+  "cost": 300
  }
 }

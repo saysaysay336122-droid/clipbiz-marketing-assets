@@ -185,7 +185,7 @@ def main():
         lines += [f"### {p['id']} 영상 {p['sec']}초, 오디오 {'켬' if p['audio'] else '끔'}",
                   f"참고 이미지: {', '.join(p['refs'])}", f"시작 사진: {p.get('still_url') or '(아직 없음) ' + p['still']}", f"영상: {p['video']}"]
         if p.get("still_url"):
-            cmd = dict(model=model, options=dict(prompt=p["video"], start_frame=p["still_url"], generation_mode="frame", duration=p["sec"],
+            cmd = dict(model=model, options=dict(prompt=p["video"], start_frame=p["still_url"], duration=p["sec"],
                                                  resolution="720p", aspect_ratio="9:16", generate_audio=p["audio"]))
             lines += ["드롭샷 명령:", "```json", json.dumps(cmd, ensure_ascii=False, indent=1), "```"]
         lines.append("")

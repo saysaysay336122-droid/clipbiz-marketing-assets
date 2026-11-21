@@ -1,0 +1,66 @@
+{
+ "home": {
+  "job": "mcp_e9bbf31438464274b704602e1a84a1b3",
+  "cost": 75
+ },
+ "S1": {
+  "job": "mcp_812feada3ed742a2bc6b6fc08bcf075b",
+  "cost": 75
+ },
+ "S4": {
+  "job": "mcp_cea215dfa2344680ab9cd66c62d282c0",
+  "cost": 75
+ },
+ "S2": {
+  "job": "mcp_0d98ecd745c7444c8f8f0b5fd22822b1",
+  "cost": 75
+ },
+ "S3": {
+  "job": "mcp_b95c9d770f7c4a5881bff27ab7115bb3",
+  "cost": 75
+ },
+ "S4b": {
+  "job": "mcp_d1ccf613b53c4e1ebde31a72859199ae",
+  "cost": 75
+ },
+ "S5": {
+  "job": "mcp_5dc3cef23c724d5a968aaf860543a616",
+  "cost": 75
+ },
+ "S6": {
+  "job": "mcp_43192b88a3bc4328b6aaea0f42da4cd3",
+  "cost": 75
+ },
+ "S1v": {
+  "job": "mcp_dd08f251a4b744cb9ffd578936513f29",
+  "cost": 300
+ },
+ "S2b": {
+  "job": "mcp_c24ce839a0df498bbb65dd2643e686b8",
+  "cost": 75
+ },
+ "S5b": {
+  "job": "mcp_100ab2e316f24593a85be48c5b270d72",
+  "cost": 75
+ },
+ "S3v": {
+  "job": "mcp_aa191e69551d4d9a80bf4452ff5da5ab",
+  "cost": 300
+ },
+ "S4v": {
+  "job": "mcp_590b2a124e3a4b9cbe7b9de3d76ed788",
+  "cost": 375
+ },
+ "S6v": {
+  "job": "mcp_375a720248db4e92bcf9005b67aa4d77",
+  "cost": 300
+ },
+ "S2v": {
+  "job": "mcp_6d65949d4fd04f56956350a01f90da23",
+  "cost": 300
+ },
+ "S5v": {
+  "job": "mcp_2b890371ea7f480c98a2f9127aebf194",
+  "cost": 300
+ }
+}

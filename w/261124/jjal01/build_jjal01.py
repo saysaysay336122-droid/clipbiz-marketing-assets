@@ -65,15 +65,25 @@ def overlays(cfg):
     a, b = cfg["caption_t"]
     out.append((png("cap.png", cap), a, b))
 
-    def line(d):
-        center(d, 1150, cfg["line"]["text"], font(FB, 62), stroke=6)
-    a, b = cfg["line"]["t"]
-    out.append((png("line.png", line), a, b))
+    if cfg.get("line"):
+        def line(d):
+            center(d, 1150, cfg["line"]["text"], font(FB, 62), stroke=6)
+        a, b = cfg["line"]["t"]
+        out.append((png("line.png", line), a, b))
 
     def tag(d):
         f1, f2 = font(FB, 60), font(FB, 46)
         y = 1360
         w = max(d.textlength("2027 한 수", font=f1), d.textlength("hongchaksa.kr", font=f2))
+        if cfg.get("tag_right"):
+            y = cfg["tag_right"]
+            x1 = W - 40
+            x0 = x1 - w - 80
+            d.rounded_rectangle((x0, y - 18, x1, y + 168), 26, fill=(15, 15, 20, 190))
+            for txt, f, fill, dy in [("2027 한 수", f1, YEL, 0), ("hongchaksa.kr", f2, (255, 255, 255, 255), 86)]:
+                tw = d.textlength(txt, font=f)
+                d.text((x0 + (x1 - x0 - tw) / 2, y + dy), txt, font=f, fill=fill)
+            return
         x0, x1 = (W - w) / 2 - 40, (W + w) / 2 + 40
         d.rounded_rectangle((x0, y - 18, x1, y + 168), 26, fill=(15, 15, 20, 190))
         center(d, y, "2027 한 수", f1, fill=YEL, stroke=0)
@@ -165,13 +175,13 @@ def audio(cfg, tmp, total):
         w.setframerate(SR)
         w.writeframes((np.clip(buf, -1, 1) * 32767).astype(np.int16).tobytes())
     # 2패스 loudnorm -14 LUFS, 최고 -2 dBTP
-    r = subprocess.run(["ffmpeg", "-i", raw, "-af", "loudnorm=I=-14:TP=-2.6:LRA=11:print_format=json", "-f", "null", "-"],
+    r = subprocess.run(["ffmpeg", "-i", raw, "-af", "loudnorm=I=-13.4:TP=-2.6:LRA=11:print_format=json", "-f", "null", "-"],
                        stderr=subprocess.PIPE, text=True).stderr
     j = json.loads(r[r.rindex("{"):r.rindex("}") + 1])
     out = os.path.join(tmp, "mix_norm.wav")
     run(["ffmpeg", "-y", "-i", raw, "-af",
-         f"loudnorm=I=-14:TP=-2.6:LRA=11:measured_I={j['input_i']}:measured_TP={j['input_tp']}:measured_LRA={j['input_lra']}:"
-         f"measured_thresh={j['input_thresh']}:offset={j['target_offset']}:linear=true,alimiter=limit=0.72:level=disabled", "-ar", str(SR), out])
+         f"loudnorm=I=-13.4:TP=-2.6:LRA=11:measured_I={j['input_i']}:measured_TP={j['input_tp']}:measured_LRA={j['input_lra']}:"
+         f"measured_thresh={j['input_thresh']}:offset={j['target_offset']}:linear=true,alimiter=limit=0.76:level=disabled", "-ar", str(SR), out])
     return out
 
 

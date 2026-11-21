@@ -1,0 +1,23 @@
+{
+ "segments": [
+  {"path": "../clips/S1.mp4", "use": [0.0, 1.4], "crop": [0, 0, 596, 1060], "grade": "S1", "gain": 0.8},
+  {"path": "../v4/clips/N2.mp4", "use": [0.0, 2.6], "grade": "N2", "gain": 1.25},
+  {"path": "../clips/S2.mp4", "use": [0.0, 0.4], "grade": "S2", "gain": 1.0},
+  {"path": "../clips/S2.mp4", "use": [0.4, 1.25], "crop": [118, 420, 484, 860], "grade": "S2", "gain": 1.0},
+  {"path": "../v4/clips/N3.mp4", "use": [0.8, 3.0], "grade": "N3"},
+  {"path": "../v4/clips/N2.mp4", "use": [3.0, 4.04], "grade": "N2", "gain": 1.0},
+  {"path": "../v4/clips/N3.mp4", "use": [3.0, 4.04], "grade": "N3", "id": "N3end"},
+  {"still_from": "N3end", "dur": 2.2, "zoom": 0.03}
+ ],
+ "overlays": [
+  {"png": "ov/ai.png", "t": [0, 99]},
+  {"png": "ov/cap1.png", "t": [0, 2.0]},
+  {"png": "ov/cap2.png", "t": [2.1, 4.0]},
+  {"png": "ov/cap3.png", "t": [7.45, 8.55]},
+  {"png": "ov/end.png", "t": [9.6, 99], "fade": 0.25}
+ ],
+ "blur": [[380, 480, 160, 460, 4.0, 4.4], [300, 0, 200, 300, 4.4, 5.25]],
+ "music": {"sections": [[0, 4.0, "comedy", "F"], [4.0, 11.76, "stop", "F"]], "gain": 0.3},
+ "sfx": [[4.47, "squish", 1.0], [4.4, "room", 0.08, 7.3], [7.95, "ding", 0.45], [9.62, "logo", 0.9]],
+ "out": "hcs_jjal01_v6.mp4"
+}

@@ -1,0 +1,18 @@
+{
+ "char_sian": {
+  "A_chosen": "mcp_3ceb15606fcd47e9bea0004539f371fc",
+  "B": "mcp_a5ec1740fa264406ba9707a44518de4c"
+ },
+ "S1_still": "mcp_d5412aab480248f3a652b4d5f1cf838d",
+ "S2_still": "mcp_3f1f743b229149ea9955d02c9959b32a",
+ "S1_video_10s_audio": "mcp_4690cc2128344effb950ca5573f5d2a3",
+ "S2_video_5s_audio": "mcp_5f3dc4f768a44ba2b287a58eeb8f8da3",
+ "credits": {
+  "sian": 150,
+  "stills": 150,
+  "S1": 750,
+  "S2": 375,
+  "total": 1425,
+  "regen": 0
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "N2_still": "mcp_4903f30840864c60af7ab43ff7e0cc2d",
+ "N3_still": "mcp_9d42f71aba8a47a1817c1dacd61d1334",
+ "N3_still_bag_unused": "mcp_042a02f5fa594c9cb0cabb0b867635a5",
+ "N2_video_4s_audio": "mcp_58b0dafd2932455482d29ab2ef39a84b",
+ "N3_video_4s": "mcp_d3448508e645458c852a1759bda49251",
+ "reused": [
+  "../clips/S1.mp4 0-1.3, 7.9-9.3",
+  "../clips/S2.mp4 0-0.9, 0.9-1.8"
+ ],
+ "credits": {
+  "stills": 225,
+  "videos": 600,
+  "total": 825,
+  "unused_still": 75
+ }
+}
